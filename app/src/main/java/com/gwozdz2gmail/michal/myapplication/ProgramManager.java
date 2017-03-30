@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.View;
@@ -13,13 +14,13 @@ import android.widget.ImageView;
 import java.io.File;
 
 public class ProgramManager {
+    static Bitmap b = null;
     /**
      * Loading photo.
      * @param activity dialog's owner
      */
-    public static void load(final Activity activity, boolean loading){
+    public static void load(final Activity activity){
         Intent loadingIntent = new Intent(activity, LoadingPhotoActivity.class);
-        loadingIntent.putExtra("loading", loading);
         activity.startActivity(loadingIntent);
     }
 }

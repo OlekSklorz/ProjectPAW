@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,31 +37,27 @@ public class LoadingPhotoActivity extends AppCompatActivity {
 
         image = (ImageView) findViewById(R.id.imageView);
 
-        Intent intent = getIntent();
-        boolean loadingOption = intent.getBooleanExtra("loading", true);
+       // Intent intent = getIntent();
+        //boolean loadingOption = intent.getBooleanExtra("loading", true);
         Intent actionIntent;
 
 
 
-        if(savedInstanceState != null){
-            image.setImageBitmap((Bitmap)savedInstanceState.getParcelable("obrazek"));
-        }
-        Log.d("IMAGE = ", image.toString());
-        if(loadingOption){
+        //if(loadingOption){
             actionIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore
                     .Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(actionIntent, 1);
-        }else{
+        //}else{
             //actionIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             //File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
             //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
             //startActivityForResult(actionIntent, 2);
 
-            image.setDrawingCacheEnabled(true);
+            //image.setDrawingCacheEnabled(true);
             //Bitmap b = image.getDrawingCache();
-            String path =  Environment.getExternalStorageDirectory().getAbsolutePath() + "0";
-            addImageToGallery(path,image.getContext());
-        }
+            //String path =  Environment.getExternalStorageDirectory().getAbsolutePath() + "0";
+            //addImageToGallery(path,image.getContext());
+       // }
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -115,28 +112,16 @@ public class LoadingPhotoActivity extends AppCompatActivity {
             }*/
         }
     }
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState){
-        Bitmap bitmap = image.getDrawingCache();
-        savedInstanceState.putParcelable("obrazek", bitmap);
-    }
     /**
      * Loading photo.
      * @param view method's owner
      */
     public void load(View view){
-        ProgramManager.load(this, true);
+        ProgramManager.load(this);
     }
 
-    public void save(View view) { ProgramManager.load(this, false);}
-    public static void addImageToGallery(final String filePath, final Context context) {
-
-        ContentValues values = new ContentValues();
-
-        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-        values.put(MediaStore.MediaColumns.DATA, filePath);
-
-        context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    public void save(View view) {
+        MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable)image.getDrawable()).getBitmap(),"MyFile.png", "Created file");
+        Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
     }
 }
