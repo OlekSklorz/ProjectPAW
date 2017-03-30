@@ -10,6 +10,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -46,5 +47,12 @@ public class LoadingPhotoActivity extends AppCompatActivity {
                 image.setImageBitmap(thumbnail);
             }
         }
+    }
+    /**
+     * Shows dialog with three options: saving, loading photo and cancel.
+     * @param view method's owner
+     */
+    public void showFileActions(View view){
+        ProgramManager.makePhotoOptionsDialog(this);
     }
 }

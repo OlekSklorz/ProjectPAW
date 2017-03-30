@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -64,26 +65,7 @@ public class MainActivity extends Activity{
      * @param view method's owner
      */
     public void showFileActions(View view){
-        final String choosingOption = getResources().getString(R.string.choosing),
-                savingOption = getResources().getString(R.string.saving);
-        final CharSequence[] options = {choosingOption, savingOption, getResources().getString(R.string.cancel)};
-        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-        dialog.setTitle(R.string.selecting_photo);
-        dialog.setItems(options, new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int item){
-                if(options[item].equals(choosingOption)){
-                    Intent loadingIntent = new Intent(MainActivity.this, LoadingPhotoActivity.class);
-                    startActivity(loadingIntent);
-                }else if(options[item].equals(savingOption)){
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-                    startActivityForResult(intent, 2);
-                }else dialog.dismiss();
-            }
-        });
-        dialog.show();
+        ProgramManager.makePhotoOptionsDialog(this);
     }
 }
 
