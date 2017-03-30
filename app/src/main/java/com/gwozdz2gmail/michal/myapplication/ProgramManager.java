@@ -12,6 +12,7 @@ import android.view.View;
 import java.io.File;
 
 public class ProgramManager {
+    //static CharSequence[] options;
     /**
      * Shows dialog with three options: saving, loading photo and cancel.
      * @param activity dialog's owner
@@ -20,7 +21,12 @@ public class ProgramManager {
         Resources strings = activity.getResources();
         final String choosingOption = strings.getString(R.string.choosing),
                 savingOption = strings.getString(R.string.saving);
-        final CharSequence[] options = {choosingOption, savingOption, strings.getString(R.string.cancel)};
+        final CharSequence[] options;
+        if(activity instanceof MainActivity) {
+            options = new CharSequence[]{choosingOption, strings.getString(R.string.cancel)};
+        }else{
+            options = new CharSequence[]{choosingOption, savingOption, strings.getString(R.string.cancel)};
+        }
         AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
         dialog.setTitle(R.string.selecting_photo);
         dialog.setItems(options, new DialogInterface.OnClickListener(){
