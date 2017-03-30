@@ -14,12 +14,12 @@ import java.io.File;
 
 public class ProgramManager {
     /**
-     * Creates dialog with three options: saving, loading photo and cancel.
+     * Loading photo.
      * @param activity dialog's owner
      */
-    public static void makePhotoOptionsDialog(final Activity activity){
+    public static void load(final Activity activity, boolean loading){
         Intent loadingIntent = new Intent(activity, LoadingPhotoActivity.class);
-        loadingIntent.putExtra("loading", true);
+        loadingIntent.putExtra("loading", loading);
         activity.startActivity(loadingIntent);
     }
 }

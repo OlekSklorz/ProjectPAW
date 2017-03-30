@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|left"
-        android:onClick="showFileActions"
+        android:onClick="load"
         android:src="@drawable/load_file_icon"
         android:background="@null"/>
 
@@ -35,7 +35,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:src="@drawable/create_photo_icon"
+        android:onClick="save"
+        android:src="@drawable/load_file_icon"
         android:background="@null"/>
 
     <ImageView

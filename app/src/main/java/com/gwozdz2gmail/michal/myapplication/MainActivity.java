@@ -61,11 +61,11 @@ public class MainActivity extends Activity{
     }
 
     /**
-     * Shows dialog with three options: saving, loading photo and cancel.
+     * Loading photo.
      * @param view method's owner
      */
-    public void showFileActions(View view){
-        ProgramManager.makePhotoOptionsDialog(this);
+    public void load(View view){
+        ProgramManager.load(this, true);
     }
 }
 

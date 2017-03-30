@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -43,6 +45,7 @@ public class LoadingPhotoActivity extends AppCompatActivity {
         if(savedInstanceState != null){
             image.setImageBitmap((Bitmap)savedInstanceState.getParcelable("obrazek"));
         }
+        Log.d("IMAGE = ", image.toString());
         if(loadingOption){
             actionIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore
                     .Images.Media.EXTERNAL_CONTENT_URI);
@@ -114,16 +117,18 @@ public class LoadingPhotoActivity extends AppCompatActivity {
     }
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
-        Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
+        Bitmap bitmap = image.getDrawingCache();
         savedInstanceState.putParcelable("obrazek", bitmap);
     }
     /**
-     * Shows dialog with three options: saving, loading photo and cancel.
+     * Loading photo.
      * @param view method's owner
      */
-    public void showFileActions(View view){
-        ProgramManager.makePhotoOptionsDialog(this);
+    public void load(View view){
+        ProgramManager.load(this, true);
     }
+
+    public void save(View view) { ProgramManager.load(this, false);}
     public static void addImageToGallery(final String filePath, final Context context) {
 
         ContentValues values = new ContentValues();
