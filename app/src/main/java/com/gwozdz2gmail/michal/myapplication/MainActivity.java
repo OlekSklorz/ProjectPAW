@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +20,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class MainActivity extends Activity{
     private Camera mCamera = null;
@@ -31,7 +36,7 @@ public class MainActivity extends Activity{
         setContentView(R.layout.activity_main);
         createPhotoButton = (ImageButton) findViewById(R.id.createImageB);
 
-        /*AdapterView.OnClickListener createPhoto = new View.OnClickListener() {
+        AdapterView.OnClickListener createPhoto = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 System.out.println("o chuh");
@@ -50,48 +55,35 @@ public class MainActivity extends Activity{
             mCameraView = new CameraView(this, mCamera);//create a SurfaceView to show camera data
             FrameLayout camera_view = (FrameLayout)findViewById(R.id.camera_view);
             camera_view.addView(mCameraView);//add the SurfaceView to the layout
-        }*/
+        }
         image = (ImageView) findViewById(R.id.imageView);
     }
 
     /**
-     * Load photo from gallery.
+     * Shows dialog with three options: saving, loading photo and cancel.
      * @param view method's owner
      */
-    public void load(View view){
-        final String choosingOption = getResources().getString(R.string.choosing);
-        final CharSequence[] options = {choosingOption, getResources().getString(R.string.cancel)};
+    public void showFileActions(View view){
+        final String choosingOption = getResources().getString(R.string.choosing),
+                savingOption = getResources().getString(R.string.saving);
+        final CharSequence[] options = {choosingOption, savingOption, getResources().getString(R.string.cancel)};
         AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
         dialog.setTitle(R.string.selecting_photo);
         dialog.setItems(options, new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int item){
                 if(options[item].equals(choosingOption)){
-                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore
-                    .Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, 1);
+                    Intent loadingIntent = new Intent(MainActivity.this, LoadingPhotoActivity.class);
+                    startActivity(loadingIntent);
+                }else if(options[item].equals(savingOption)){
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+                    startActivityForResult(intent, 2);
                 }else dialog.dismiss();
             }
         });
         dialog.show();
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK){
-            if(requestCode == 1){
-                Uri selectedImage = data.getData();
-                String[] filePath = {MediaStore.Images.Media.DATA};
-                Cursor c = getContentResolver().query(selectedImage, filePath, null, null, null);
-                c.moveToFirst();
-                int columnIndex = c.getColumnIndex(filePath[0]);
-                String picturePath = c.getString(columnIndex);
-                c.close();
-                Bitmap thumbnail = BitmapFactory.decodeFile(picturePath);
-                Log.w("path of image ", picturePath+"");
-                image.setImageBitmap(thumbnail);
-            }
-        }
     }
 }
 

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".LoadingPhotoActivity">
 
     <FrameLayout
         android:id="@+id/camera_view"
@@ -22,11 +22,11 @@
         android:background="@null"/>
 
     <ImageButton
-        android:id="@+id/loadSaveFile"
+        android:id="@+id/load_file"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|left"
-        android:onClick="showFileActions"
+        android:onClick="load"
         android:src="@drawable/load_file_icon"
         android:background="@null"/>
 
@@ -37,4 +37,11 @@
         android:layout_gravity="bottom|center_horizontal"
         android:src="@drawable/create_photo_icon"
         android:background="@null"/>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="316dp"
+        android:layout_height="359dp"
+        android:src="@drawable/load_file_icon" />
+
 </FrameLayout>
