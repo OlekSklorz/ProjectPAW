@@ -24,15 +24,22 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class LoadingPhotoActivity extends AppCompatActivity {
+
     private ImageView image;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_photo);
+
         image = (ImageView) findViewById(R.id.imageView);
+
         Intent intent = getIntent();
         boolean loadingOption = intent.getBooleanExtra("loading", true);
         Intent actionIntent;
+
+
+
         if(savedInstanceState != null){
             image.setImageBitmap((Bitmap)savedInstanceState.getParcelable("obrazek"));
         }
@@ -45,7 +52,7 @@ public class LoadingPhotoActivity extends AppCompatActivity {
             //File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
             //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
             //startActivityForResult(actionIntent, 2);
-            System.out.println("TUTAJ " + image);
+
             image.setDrawingCacheEnabled(true);
             //Bitmap b = image.getDrawingCache();
             String path =  Environment.getExternalStorageDirectory().getAbsolutePath() + "0";

@@ -44,7 +44,7 @@ public class MainActivity extends Activity{
             }
         };
 
-        createPhotoButton.setOnClickListener((View.OnClickListener) createPhoto);
+        createPhotoButton.setOnClickListener(createPhoto);
 
         try{
             mCamera = Camera.open();//you can use open(int) to use different cameras

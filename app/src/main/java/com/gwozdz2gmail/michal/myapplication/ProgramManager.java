@@ -18,30 +18,8 @@ public class ProgramManager {
      * @param activity dialog's owner
      */
     public static void makePhotoOptionsDialog(final Activity activity){
-        Resources strings = activity.getResources();
-        final String choosingOption = strings.getString(R.string.choosing),
-                savingOption = strings.getString(R.string.saving);
-        final CharSequence[] options;
-        if(activity instanceof MainActivity) {
-            options = new CharSequence[]{choosingOption, strings.getString(R.string.cancel)};
-        }else{
-            options = new CharSequence[]{choosingOption, savingOption, strings.getString(R.string.cancel)};
-        }
-        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-        dialog.setTitle(R.string.selecting_photo);
-        dialog.setItems(options, new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int item){
-                Intent loadingIntent = new Intent(activity, LoadingPhotoActivity.class);
-                if(options[item].equals(choosingOption)){
-                    loadingIntent.putExtra("loading", true);
-                    activity.startActivity(loadingIntent);
-                }else if(options[item].equals(savingOption)){
-                    loadingIntent.putExtra("loading", false);
-                    activity.startActivity(loadingIntent);
-                }else dialog.dismiss();
-            }
-        });
-        dialog.show();
+        Intent loadingIntent = new Intent(activity, LoadingPhotoActivity.class);
+        loadingIntent.putExtra("loading", true);
+        activity.startActivity(loadingIntent);
     }
 }
