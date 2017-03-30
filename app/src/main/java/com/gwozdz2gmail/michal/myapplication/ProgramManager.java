@@ -12,9 +12,8 @@ import android.view.View;
 import java.io.File;
 
 public class ProgramManager {
-    //static CharSequence[] options;
     /**
-     * Shows dialog with three options: saving, loading photo and cancel.
+     * Creates dialog with three options: saving, loading photo and cancel.
      * @param activity dialog's owner
      */
     public static void makePhotoOptionsDialog(final Activity activity){
