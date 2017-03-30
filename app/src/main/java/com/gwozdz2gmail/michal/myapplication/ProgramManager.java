@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ImageView;
 
 import java.io.File;
 
@@ -31,14 +32,13 @@ public class ProgramManager {
         dialog.setItems(options, new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int item){
+                Intent loadingIntent = new Intent(activity, LoadingPhotoActivity.class);
                 if(options[item].equals(choosingOption)){
-                    Intent loadingIntent = new Intent(activity, LoadingPhotoActivity.class);
+                    loadingIntent.putExtra("loading", true);
                     activity.startActivity(loadingIntent);
                 }else if(options[item].equals(savingOption)){
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-                    activity.startActivityForResult(intent, 2);
+                    loadingIntent.putExtra("loading", false);
+                    activity.startActivity(loadingIntent);
                 }else dialog.dismiss();
             }
         });
