@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import java.io.File;
 
 public class ProgramManager {
-    static Bitmap b = null;
     /**
      * Loading photo.
      * @param activity chooser's owner

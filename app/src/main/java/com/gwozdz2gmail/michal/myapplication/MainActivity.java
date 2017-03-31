@@ -30,7 +30,6 @@ public class MainActivity extends Activity{
     private Camera mCamera = null;
     private CameraView mCameraView = null;
     private ImageButton createPhotoButton = null;
-    private ImageView image;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +56,6 @@ public class MainActivity extends Activity{
             FrameLayout camera_view = (FrameLayout)findViewById(R.id.camera_view);
             camera_view.addView(mCameraView);//add the SurfaceView to the layout
         }
-        image = (ImageView) findViewById(R.id.imageView);
     }
 
     /**
