@@ -65,7 +65,7 @@ public class MainActivity extends Activity{
      * @param view method's owner
      */
     public void load(View view){
-        ProgramManager.load(this);
+        ProgramManager.showChooser(this);
     }
 }
 

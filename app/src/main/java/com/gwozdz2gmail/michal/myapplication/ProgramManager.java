@@ -17,10 +17,10 @@ public class ProgramManager {
     static Bitmap b = null;
     /**
      * Loading photo.
-     * @param activity dialog's owner
+     * @param activity chooser's owner
      */
-    public static void load(final Activity activity){
-        Intent loadingIntent = new Intent(activity, LoadingPhotoActivity.class);
+    public static void showChooser(final Activity activity){
+        Intent loadingIntent = new Intent(activity, LoadingSavingPhotoActivity.class);
         activity.startActivity(loadingIntent);
     }
 }

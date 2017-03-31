@@ -28,7 +28,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class LoadingPhotoActivity extends AppCompatActivity {
+public class LoadingSavingPhotoActivity extends AppCompatActivity {
 
     private ImageView image;
 
@@ -119,20 +119,20 @@ public class LoadingPhotoActivity extends AppCompatActivity {
      * @param view method's owner
      */
     public void load(View view){
-        ProgramManager.load(this);
+        ProgramManager.showChooser(this);
     }
 
     public void save(View view) {
         //It's first idea. It's working but we can't create our folder, because it creates default folder Pictures in Gallery
-        /*MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable)image.getDrawable()).getBitmap(),"MyFile.png", "Created file");
-        Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();*/
+        MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable)image.getDrawable()).getBitmap(),"MyFile.png", "Created file");
+        Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
 
         /* This is where the second idea begins. It's better idea, because we can create our
         folder for this application for example OurApplicationFolder and this folder will be created
         in Gallery. But be careful - saving process is strange - to displayed new folder you must for
         example disconnect cabel from computer or restart phone and wait.
          */
-        Bitmap map = ((BitmapDrawable)image.getDrawable()).getBitmap();
+        /*Bitmap map = ((BitmapDrawable)image.getDrawable()).getBitmap();
         File pictureFile = getOutputMediaFile();
         if (pictureFile == null) {
             Log.d("TAG",
@@ -148,7 +148,7 @@ public class LoadingPhotoActivity extends AppCompatActivity {
             Log.d("TAG", "File not found: " + e.getMessage());
         } catch (IOException e) {
             Log.d("TAG", "Error accessing file: " + e.getMessage());
-        }
+        }*/
     }
     private  File getOutputMediaFile(){
         // To be safe, you should check that the SDCard is mounted
