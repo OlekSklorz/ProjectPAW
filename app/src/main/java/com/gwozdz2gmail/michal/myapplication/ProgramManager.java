@@ -6,20 +6,31 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 public class ProgramManager {
     /**
      * Loading photo.
      * @param activity chooser's owner
+     * @param image drawable image to be send as a backup. It may be null if we don't want to send something.
      */
-    public static void showChooser(final Activity activity){
+    public static void showChooser(final Activity activity, BitmapDrawable image){
+        byte[] byteArray = null;
+        if(image != null) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            image.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byteArray = stream.toByteArray();
+        }
         Intent loadingIntent = new Intent(activity, LoadingSavingPhotoActivity.class);
+        loadingIntent.putExtra("image", byteArray);
         activity.startActivity(loadingIntent);
     }
 }

@@ -38,29 +38,10 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_loading_photo);
 
         image = (ImageView) findViewById(R.id.imageView);
-
-       // Intent intent = getIntent();
-        //boolean loadingOption = intent.getBooleanExtra("loading", true);
-        Intent actionIntent;
-
-
-
-        //if(loadingOption){
-            actionIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore
-                    .Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(actionIntent, 1);
-        //}else{
-            //actionIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            //File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
-            //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-            //startActivityForResult(actionIntent, 2);
-
-            //image.setDrawingCacheEnabled(true);
-            //Bitmap b = image.getDrawingCache();
-            //String path =  Environment.getExternalStorageDirectory().getAbsolutePath() + "0";
-            //addImageToGallery(path,image.getContext());
-       // }
+        startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images
+                .Media.EXTERNAL_CONTENT_URI), 1);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
@@ -76,42 +57,11 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
                 Bitmap thumbnail = BitmapFactory.decodeFile(picturePath);
                 Log.w("path of image ", picturePath+"");
                 image.setImageBitmap(thumbnail);
-                //ProgramManager.im = image.;
-            }/*else{
-                if(requestCode == 2) {
-                    File f = new File(Environment.getExternalStorageDirectory().toString());
-                    for (File temp : f.listFiles())
-                        if (temp.getName().equals("temp.jpg")) {
-                            f = temp;
-                            break;
-                        }
-                    try {
-                        Bitmap bitmap;
-                        BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-                        bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), bitmapOptions);
-                        image.setImageBitmap(bitmap);
-                        String path = android.os.Environment.getExternalStorageDirectory() + File.separator
-                                + "Phoenix" + File.separator + "default";
-                        f.delete();
-                        OutputStream outFile = null;
-                        File file = new File(path, String.valueOf(System.currentTimeMillis()) + ".jpg");
-                        try {
-                            outFile = new FileOutputStream(file);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outFile);
-                            outFile.flush();
-                            outFile.close();
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }*/
+            }
+        }else{
+            byte[] backupByteArray = getIntent().getByteArrayExtra("image");
+            if(backupByteArray != null)
+                image.setImageBitmap(BitmapFactory.decodeByteArray(backupByteArray, 0, backupByteArray.length));
         }
     }
     /**
@@ -119,7 +69,7 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
      * @param view method's owner
      */
     public void load(View view){
-        ProgramManager.showChooser(this);
+        ProgramManager.showChooser(this, ((BitmapDrawable)image.getDrawable()));
     }
 
     public void save(View view) {
@@ -150,6 +100,11 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
             Log.d("TAG", "Error accessing file: " + e.getMessage());
         }*/
     }
+
+    /**
+     * This is method for second idea of saving image.
+     * @return image file
+     */
     private  File getOutputMediaFile(){
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
