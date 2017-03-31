@@ -13,6 +13,12 @@
         android:layout_height="match_parent">
     </FrameLayout>
 
+    <!-- It must be first to it doesn't hide buttons -->
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <ImageButton
         android:id="@+id/settings"
         android:layout_width="wrap_content"
@@ -39,10 +45,5 @@
         android:src="@drawable/load_file_icon"
         android:background="@null"/>
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="316dp"
-        android:layout_height="359dp"
-        android:src="@drawable/load_file_icon" />
 
 </FrameLayout>
