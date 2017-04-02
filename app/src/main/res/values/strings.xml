@@ -2,9 +2,10 @@
     <string name="app_name">My Application</string>
     <string name="selecting_photo">Select Photo</string>
     <string name="choosing">Choose from Gallery</string>
-    <string name="cancel">Cancel</string>
-    <string name="saving">Save</string>
     <string name="language">Language</string>
     <string name="about">About</string>
     <string name="help">Help</string>
+    <string name="authors">Authors: Michał Gwódź, Aleksander Sklorz</string>
+    <string name="version">Version: 1.0</string>
+    <string name="ok">OK</string>
 </resources>
