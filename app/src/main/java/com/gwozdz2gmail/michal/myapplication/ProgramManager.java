@@ -9,7 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -32,5 +34,17 @@ public class ProgramManager {
         Intent loadingIntent = new Intent(activity, LoadingSavingPhotoActivity.class);
         loadingIntent.putExtra("image", byteArray);
         activity.startActivity(loadingIntent);
+    }
+
+    /**
+     * Shows popup menu with settings options: language, about, help.
+     * @param activity activity
+     * @param view menu's owner
+     */
+    public static void showPopup(Activity activity, View view){
+        PopupMenu popup = new PopupMenu(activity, view);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.settings_menu, popup.getMenu());
+        popup.show();
     }
 }

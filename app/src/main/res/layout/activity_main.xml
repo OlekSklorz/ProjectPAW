@@ -19,7 +19,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|top"
         android:src="@drawable/settings_icon"
-        android:background="@null"/>
+        android:background="@null"
+        android:onClick="showPopup"/>
 
     <ImageButton
         android:id="@+id/load_file"

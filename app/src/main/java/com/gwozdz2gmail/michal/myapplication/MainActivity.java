@@ -65,5 +65,13 @@ public class MainActivity extends Activity{
     public void load(View view){
         ProgramManager.showChooser(this, null);
     }
+
+    /**
+     * Shows popup menu.
+     * @param view menu's owner
+     */
+    public void showPopup(View view){
+        ProgramManager.showPopup(this, view);
+    }
 }
 
