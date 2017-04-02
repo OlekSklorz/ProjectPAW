@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Moja aplikacja</string>
+    <string name="selecting_photo">Wybierz Zdjęcie</string>
+    <string name="choosing">Wybierz z Galerii</string>
+    <string name="language">Język</string>
+    <string name="about">O programie</string>
+    <string name="help">Pomoc</string>
+    <string name="authors">Autorzy: Michał Gwódź, Aleksander Sklorz</string>
+    <string name="version">Wersja: 1.0</string>
+    <string name="ok">OK</string>
+    <string name="language_chooser">Wybierz język</string>
+    <string-array name="languages">
+        <item name="english">Angielski</item>
+        <item name="polish">Polski</item>
+    </string-array>
+</resources>
