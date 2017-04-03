@@ -1,41 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <FrameLayout
-        android:id="@+id/camera_view"
+    <TextureView
+        android:id="@+id/texture"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_take_picture"
+        android:layout_alignParentTop="true"/>
 
     <ImageButton
         android:id="@+id/settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|top"
         android:src="@drawable/settings_icon"
         android:background="@null"
-        android:onClick="showPopup"/>
+        android:onClick="showPopup"
+
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp" />
 
     <ImageButton
         android:id="@+id/load_file"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
         android:onClick="load"
         android:src="@drawable/load_file_icon"
-        android:background="@null"/>
+        android:background="@null"
+
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"/>
 
     <ImageButton
-        android:id="@+id/createImageB"
+        android:id="@+id/btn_take_picture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
         android:src="@drawable/create_photo_icon"
-        android:background="@null"/>
-</FrameLayout>
+        android:background="@null"
+
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"/>
+
+</RelativeLayout>
