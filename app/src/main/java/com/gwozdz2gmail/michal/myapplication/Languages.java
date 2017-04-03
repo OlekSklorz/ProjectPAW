@@ -46,11 +46,9 @@ public class Languages {
     }
 
     private static String getCode(String language){
-        for(Map.Entry<String, String> entry : languages.entrySet()) {
-            Log.d("JESTEM", entry.getKey());
+        for(Map.Entry<String, String> entry : languages.entrySet())
             if (entry.getKey().equalsIgnoreCase(language))
                 return entry.getValue();
-        }
         return null;
     }
 }

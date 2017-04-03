@@ -12,7 +12,6 @@ public class SplashScreenActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        //Language.fillLanguages(this); // fill initial map of languages
         activateMainActivity();
     }
 
