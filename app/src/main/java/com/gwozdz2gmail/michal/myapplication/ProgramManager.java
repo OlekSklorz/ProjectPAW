@@ -82,9 +82,9 @@ public class ProgramManager {
         dialog.show();
     }
 
-    private static void showLanguageDialog(Activity activity){
-        String language = Locale.getDefault().getDisplayLanguage();
-        Resources resources = activity.getResources();
+    private static void showLanguageDialog(final Activity activity){
+        final String language = Locale.getDefault().getDisplayLanguage();
+        final Resources resources = activity.getResources();
         final String[] languages = resources.getStringArray(R.array.languages);
         int defaultLanguageIndex = 0;
         for(int i = 0; i < languages.length; i++)
@@ -95,23 +95,12 @@ public class ProgramManager {
                 new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(languages[which].equalsIgnoreCase("polski")){
-                            
-                        }else{
-                            if(languages[which].equalsIgnoreCase("angielski")){
-
-                            }
-                        }
+                        /* we need create new Languages object every time, to change languages in
+                        map to names in choosen language*/
+                       new Languages(activity).setLocalization(languages[which], resources);
                     }
                 }).create();
         dialog.setCanceledOnTouchOutside(true);
         dialog.show();
-    }
-    private void setLocalization(String language, Resources resources){
-        Locale locale = new Locale("en");
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        Configuration conf = resources.getConfiguration();
-        conf.setLocale(locale);
-        resources.updateConfiguration(conf, metrics);
     }
 }

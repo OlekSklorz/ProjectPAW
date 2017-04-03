@@ -14,4 +14,6 @@
         <item name="english">Angielski</item>
         <item name="polish">Polski</item>
     </string-array>
+    <string name="english">Angielski</string>
+    <string name="polish">Polski</string>
 </resources>

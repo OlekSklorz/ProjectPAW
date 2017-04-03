@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -20,6 +22,7 @@ import android.media.ImageReader;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -157,9 +160,9 @@ public class Camera2API {
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
-                        save(bytes);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        //save(bytes);
+                        Bitmap bit = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
+                        MediaStore.Images.Media.insertImage(context.getContentResolver(), bit, "Asd", "asd");
                     } finally {
                         if (image != null) {
                             image.close();
