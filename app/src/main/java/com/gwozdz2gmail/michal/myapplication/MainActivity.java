@@ -63,7 +63,6 @@ public class MainActivity extends Activity{
     private ImageReader imageReader;
     private File file;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
-    private boolean mFlashSupported;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
 
@@ -296,27 +295,6 @@ public class MainActivity extends Activity{
         }
     }
 
-    private void openCamera() {
-        CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        Log.e(TAG, "is camera open");
-        try {
-            cameraId = manager.getCameraIdList()[0];
-            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-//            assert map != null;
-            imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-            // Add permission for camera and let user grant the permission
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
-                return;
-            }
-            manager.openCamera(cameraId, stateCallback, null);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-        Log.e(TAG, "openCamera X");
-    }
-
     protected void updatePreview() {
         if (null == cameraDevice) {
             Log.e(TAG, "updatePreview error, return");
@@ -326,17 +304,6 @@ public class MainActivity extends Activity{
             cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void closeCamera() {
-        if (null != cameraDevice) {
-            cameraDevice.close();
-            cameraDevice = null;
-        }
-        if (null != imageReader) {
-            imageReader.close();
-            imageReader = null;
         }
     }
 
@@ -369,6 +336,67 @@ public class MainActivity extends Activity{
         closeCamera();
         stopBackgroundThread();
         super.onPause();
+    }
+
+    /**
+     * CameraDevice is closing if isnt null & ImageReader is closing if isnt null
+     */
+    private void closeCamera() {
+        if (null != cameraDevice) {
+            cameraDevice.close();
+            cameraDevice = null;
+        }
+        if (null != imageReader) {
+            imageReader.close();
+            imageReader = null;
+        }
+    }
+
+    private void openCamera() {
+        CameraManager manager = createCameraManager();
+        Log.e(TAG, "is camera open");
+        try {
+            cameraId = getRearCameraID(manager);
+//            cameraId = getFrontCameraID(manager);
+            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+//            assert map != null;
+            imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
+            // Add permission for camera and let user grant the permission
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
+                return;
+            }
+            manager.openCamera(cameraId, stateCallback, null);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+        Log.e(TAG, "openCamera X");
+    }
+    //↑ ↑ ↑ openCamera()
+    /**
+     * @return CameraManager from SystemService
+     */
+    private CameraManager createCameraManager() {
+        return (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+    }
+    //↑ ↑ ↑ openCamera()
+    /**
+     * @param manager
+     * @return Rear Camera ID String
+     * @throws CameraAccessException
+     */
+    private String getRearCameraID(CameraManager manager) throws CameraAccessException {
+        return manager.getCameraIdList()[0];
+    }
+    //↑ ↑ ↑ openCamera()
+    /**
+     * @param manager
+     * @return Front Camera ID String
+     * @throws CameraAccessException
+     */
+    private String getFrontCameraID(CameraManager manager) throws CameraAccessException {
+        return manager.getCameraIdList()[1];
     }
 }
 
