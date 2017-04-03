@@ -26,20 +26,16 @@ import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
-import android.view.TextureView;
-import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,10 +52,10 @@ public class Camera2API {
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
     private String cameraId;
-    protected CameraDevice cameraDevice;
-    protected CameraCaptureSession cameraCaptureSessions;
+    private CameraDevice cameraDevice;
+    private CameraCaptureSession cameraCaptureSessions;
     protected CaptureRequest captureRequest;
-    protected CaptureRequest.Builder captureRequestBuilder;
+    private CaptureRequest.Builder captureRequestBuilder;
     private Size imageDimension;
     private ImageReader imageReader;
     private File file;
@@ -69,13 +65,13 @@ public class Camera2API {
     private Context context;
 
 
-    public Camera2API(Context context) {
+    Camera2API(Context context) {
         this.context = context;
     }
 
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
-        public void onOpened(CameraDevice camera) {
+        public void onOpened(@NonNull CameraDevice camera) {
             //This is called when the camera is open
             Log.e(TAG, "onOpened");
             cameraDevice = camera;
@@ -83,32 +79,32 @@ public class Camera2API {
         }
 
         @Override
-        public void onDisconnected(CameraDevice camera) {
+        public void onDisconnected(@NonNull CameraDevice camera) {
             cameraDevice.close();
         }
 
         @Override
-        public void onError(CameraDevice camera, int error) {
+        public void onError(@NonNull CameraDevice camera, int error) {
             cameraDevice.close();
             cameraDevice = null;
         }
     };
     final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
         @Override
-        public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+        public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
             Toast.makeText(context, "Saved:" + file, Toast.LENGTH_SHORT).show();
             createCameraPreview();
         }
     };
 
-    protected void startBackgroundThread() {
+    void startBackgroundThread() {
         mBackgroundThread = new HandlerThread("Camera Background");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
 
-    protected void stopBackgroundThread() {
+    void stopBackgroundThread() {
         mBackgroundThread.quitSafely();
         try {
             mBackgroundThread.join();
@@ -131,8 +127,10 @@ public class Camera2API {
             if (characteristics != null) {
                 jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
             }
-            int width = 640;
-            int height = 480;
+            int width = 1920;
+            int height = 1080;
+//            int width = 640;
+//            int height = 480;
             if (jpegSizes != null && 0 < jpegSizes.length) {
                 width = jpegSizes[0].getWidth();
                 height = jpegSizes[0].getHeight();
@@ -150,10 +148,10 @@ public class Camera2API {
 
             Calendar c = Calendar.getInstance();
             StringBuilder sb = new StringBuilder();
-            sb.append(c.get(Calendar.HOUR)).append(c.get(Calendar.MINUTE)).append(c.get(Calendar.SECOND))
-                    .append(c.get(Calendar.MILLISECOND));
+            sb.append(File.separator).append(c.get(Calendar.HOUR)).append(c.get(Calendar.MINUTE)).append(c.get(Calendar.SECOND))
+                    .append(c.get(Calendar.MILLISECOND)).append(".jpg");
 
-            final File file = new File(Environment.getExternalStorageDirectory()+"/"+sb+".jpg");
+            final File file = new File(Environment.getExternalStorageDirectory()+sb.toString());
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
@@ -164,8 +162,6 @@ public class Camera2API {
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
                         save(bytes);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
@@ -190,7 +186,7 @@ public class Camera2API {
             reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
             final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
                 @Override
-                public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+                public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
                     Toast.makeText(context, "Saved:" + file, Toast.LENGTH_SHORT).show();
                     createCameraPreview();
@@ -198,7 +194,7 @@ public class Camera2API {
             };
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                 @Override
-                public void onConfigured(CameraCaptureSession session) {
+                public void onConfigured(@NonNull CameraCaptureSession session) {
                     try {
                         session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
                     } catch (CameraAccessException e) {
@@ -207,7 +203,7 @@ public class Camera2API {
                 }
 
                 @Override
-                public void onConfigureFailed(CameraCaptureSession session) {
+                public void onConfigureFailed(@NonNull CameraCaptureSession session) {
                 }
             }, mBackgroundHandler);
         } catch (CameraAccessException e) {
@@ -215,14 +211,14 @@ public class Camera2API {
         }
     }
 
-    protected void createCameraPreview() {
+    private void createCameraPreview() {
         try {
             SurfaceTexture texture = MainActivity.textureView.getSurfaceTexture();
             texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
             Surface surface = new Surface(texture);
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
-            cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
+            cameraDevice.createCaptureSession(Collections.singletonList(surface), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                     //The camera is already closed
@@ -244,7 +240,7 @@ public class Camera2API {
         }
     }
 
-    protected void updatePreview() {
+    private void updatePreview() {
         if (null == cameraDevice) {
             Log.e(TAG, "updatePreview error, return");
         }
@@ -259,7 +255,7 @@ public class Camera2API {
     /**
      * CameraDevice is closing if isnt null & ImageReader is closing if isnt null
      */
-    protected void closeCamera() {
+    void closeCamera() {
         if (null != cameraDevice) {
             cameraDevice.close();
             cameraDevice = null;
@@ -270,7 +266,7 @@ public class Camera2API {
         }
     }
 
-    protected void openCamera() {
+    void openCamera() {
         CameraManager manager = createCameraManager();
         Log.e(TAG, "is camera open");
         try {
@@ -278,6 +274,7 @@ public class Camera2API {
 //            cameraId = getFrontCameraID(manager);
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            assert map != null;
             imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
             // Add permission for camera and let user grant the permission
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -295,11 +292,11 @@ public class Camera2API {
      * @return CameraManager from SystemService
      */
     private CameraManager createCameraManager() {
-        return (CameraManager) ((Activity) context).getSystemService(Context.CAMERA_SERVICE);
+        return (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
     }
     //↑ ↑ ↑ openCamera()
     /**
-     * @param manager
+     * @param manager id CameraManager object
      * @return Rear Camera ID String
      * @throws CameraAccessException
      */
@@ -308,7 +305,7 @@ public class Camera2API {
     }
     //↑ ↑ ↑ openCamera()
     /**
-     * @param manager
+     * @param manager id CameraManager object
      * @return Front Camera ID String
      * @throws CameraAccessException
      */
