@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -11,6 +12,8 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import java.util.Random;
 
 public class MainActivity extends Activity{
     private int visible = View.INVISIBLE;
@@ -101,9 +104,14 @@ public class MainActivity extends Activity{
         bugButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Random random = new Random();
                 Toast.makeText(MainActivity.this, "BUG REPORTS", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(MainActivity.this, BugReportActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setType("text/plain");
+                intent.setData(Uri.parse("mailto:" + "zuliq94@gmail.com"));
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Bug nr. " + random.nextInt());
+                intent.putExtra(Intent.EXTRA_TEXT, "Tell me what gone wrong :)");
+                startActivity(Intent.createChooser(intent, "Send Email"));
             }
         });
     }
