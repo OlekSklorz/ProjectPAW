@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:onClick="save"
-        android:src="@drawable/load_file_icon"
+        android:src="@drawable/save_icon"
         android:background="@null"
 
         android:layout_alignParentBottom="true"
