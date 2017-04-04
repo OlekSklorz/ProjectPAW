@@ -17,14 +17,20 @@ import android.view.Gravity;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Locale;
+import java.util.Random;
 
 public class ProgramManager {
+    private static int visible = View.INVISIBLE;
+    private static ImageButton settingsButton, filtersButton, shareButton, languagesButton,
+            creditsButton, bugButton;
     /**
      * Loading photo.
      * @param activity chooser's owner
@@ -42,47 +48,81 @@ public class ProgramManager {
         activity.startActivity(loadingIntent);
     }
 
-    /**
-     * Shows popup menu with settings options: language, about, help.
-     * @param activity activity
-     * @param view menu's owner
-     */
-    public static void showPopup(final Activity activity, View view){
-        PopupMenu popup = new PopupMenu(activity, view);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.settings_menu, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.language:
-                        showLanguageDialog(activity);
-                        return true;
-                    case R.id.about:
-                        showAboutDialog(activity);
-                        return true;
-                    case R.id.help:
-                        return true;
-                }
-                return false;
-            }
-        });
-        popup.show();
+    public static void initSettingsButtons(Activity activity){
+        settingsButton = (ImageButton) activity.findViewById(R.id.settings);
+        filtersButton = (ImageButton) activity.findViewById(R.id.filters);
+        shareButton = (ImageButton) activity.findViewById(R.id.share);
+        languagesButton = (ImageButton) activity.findViewById(R.id.languages);
+        creditsButton = (ImageButton) activity.findViewById(R.id.credits);
+        bugButton = (ImageButton) activity.findViewById(R.id.bugs);
+        addActionToSetttingsButton();
+        initSettingsButtonListeners(activity);
     }
 
-    private static void showAboutDialog(Activity activity){
-        Resources resources = activity.getResources();
-        TextView about = new TextView(activity);
-        about.setText(resources.getString(R.string.authors) + "\n" + resources.getString(R.string.version));
-        about.setGravity(Gravity.CENTER_HORIZONTAL);
-        about.setPadding(0, 30, 0, 0);
-        AlertDialog dialog = new AlertDialog.Builder(activity).setTitle(resources.getString(R.string.about))
-                .setView(about).setPositiveButton(resources.getString(R.string.ok), null).create();
-        dialog.setCanceledOnTouchOutside(true);
-        dialog.show();
+    private static void addActionToSetttingsButton(){
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(visible == View.INVISIBLE) {
+                    visible = View.VISIBLE;
+                } else {
+                    visible = View.INVISIBLE;
+                }
+
+                filtersButton.setVisibility(visible);
+                shareButton.setVisibility(visible);
+                languagesButton.setVisibility(visible);
+                creditsButton.setVisibility(visible);
+                bugButton.setVisibility(visible);
+            }
+        });
+    }
+
+    private static void initSettingsButtonListeners(final Activity activity){
+        filtersButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(activity, activity.getResources().getString(R.string.filters), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(activity, activity.getResources().getString(R.string.share), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        languagesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLanguageDialog(activity);
+            }
+        });
+
+        creditsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAbout(activity);
+            }
+        });
+
+        bugButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showBugActivity(activity);
+            }
+        });
+    }
+
+    private static void showAbout(Activity activity){
+        Toast.makeText(activity, activity.getResources().getString(R.string.credits), Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(activity, CreditsActivity.class);
+        activity.startActivity(intent);
     }
 
     private static void showLanguageDialog(final Activity activity){
+        Toast.makeText(activity, activity.getResources().getString(R.string.languages), Toast.LENGTH_LONG).show();
         final String language = Locale.getDefault().getDisplayLanguage();
         final Resources resources = activity.getResources();
         final String[] languages = resources.getStringArray(R.array.languages);
@@ -102,5 +142,17 @@ public class ProgramManager {
                 }).create();
         dialog.setCanceledOnTouchOutside(true);
         dialog.show();
+    }
+
+    private static void showBugActivity(Activity activity){
+        Resources resources = activity.getResources();
+        Random random = new Random();
+        Toast.makeText(activity, resources.getString(R.string.report), Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setType("text/plain");
+        intent.setData(Uri.parse("mailto:" + "zuliq94@gmail.com"));
+        intent.putExtra(Intent.EXTRA_SUBJECT, resources.getString(R.string.bug_nr) + random.nextInt());
+        intent.putExtra(Intent.EXTRA_TEXT, resources.getString(R.string.bug));
+        activity.startActivity(Intent.createChooser(intent, resources.getString(R.string.send)));
     }
 }

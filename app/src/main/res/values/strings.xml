@@ -2,8 +2,11 @@
     <string name="app_name">My Application</string>
     <string name="selecting_photo">Select Photo</string>
     <string name="choosing">Choose from Gallery</string>
-    <string name="language">Language</string>
-    <string name="about">About</string>
+    <string name="languages">LANGUAGES</string>
+    <string name="credits">CREDITS</string>
+    <string name="filters">FILTERS</string>
+    <string name="share">SHARE</string>
+    <string name="report">BUG REPORTS</string>
     <string name="help">Help</string>
     <string name="authors">Authors: Michał Gwóźdź, Aleksander Sklorz</string>
     <string name="version">Version: 1.0</string>
@@ -15,4 +18,7 @@
     </string-array>
     <string name="english">English</string>
     <string name="polish">Polish</string>
+    <string name="bug_nr">Bug nr</string>
+    <string name="bug">Tell me what gone wrong :)</string>
+    <string name="send">Send Email</string>
 </resources>

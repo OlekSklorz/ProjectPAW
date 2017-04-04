@@ -3,8 +3,11 @@
     <string name="app_name">Moja aplikacja</string>
     <string name="selecting_photo">Wybierz Zdjęcie</string>
     <string name="choosing">Wybierz z Galerii</string>
-    <string name="language">Język</string>
-    <string name="about">O programie</string>
+    <string name="languages">JĘZYKI</string>
+    <string name="credits">O PROGRAMIE</string>
+    <string name="filters">FILTRY</string>
+    <string name="share">UDOSTĘPNIJ</string>
+    <string name="report">RAPORT BŁĘDÓW</string>
     <string name="help">Pomoc</string>
     <string name="authors">Autorzy: Michał Gwóźdź, Aleksander Sklorz</string>
     <string name="version">Wersja: 1.0</string>
@@ -16,4 +19,7 @@
     </string-array>
     <string name="english">Angielski</string>
     <string name="polish">Polski</string>
+    <string name="bug_nr">Błąd nr</string>
+    <string name="bug">Opowiedź co nie działa :)</string>
+    <string name="send">Wyślij E-mail</string>
 </resources>

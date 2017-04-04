@@ -33,6 +33,7 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         image = (ImageView) findViewById(R.id.imageView);
         startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images
                 .Media.EXTERNAL_CONTENT_URI), 1);
+        ProgramManager.initSettingsButtons(this);
     }
 
     @Override
@@ -119,13 +120,5 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         String mImageName="MI_"+ timeStamp +".jpg";
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
         return mediaFile;
-    }
-
-    /**
-     * Shows popup menu.
-     * @param view menu's owner
-     */
-    public void showPopup(View view){
-        ProgramManager.showPopup(this, view);
     }
 }

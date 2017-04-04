@@ -38,12 +38,7 @@ public class MainActivity extends Activity{
         textureView.setSurfaceTextureListener(textureListener);
 
         takePictureButton = (ImageButton) findViewById(R.id.btn_take_picture);
-        settingsButton = (ImageButton) findViewById(R.id.settings);
-        filtersButton = (ImageButton) findViewById(R.id.filters);
-        shareButton = (ImageButton) findViewById(R.id.share);
-        languagesButton = (ImageButton) findViewById(R.id.languages);
-        creditsButton = (ImageButton) findViewById(R.id.credits);
-        bugButton = (ImageButton) findViewById(R.id.bugs);
+        ProgramManager.initSettingsButtons(this);
     }
 
     private void initListeners() {
@@ -54,24 +49,7 @@ public class MainActivity extends Activity{
             }
         });
 
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(visible == View.INVISIBLE) {
-                    visible = View.VISIBLE;
-                } else {
-                    visible = View.INVISIBLE;
-                }
-
-                filtersButton.setVisibility(visible);
-                shareButton.setVisibility(visible);
-                languagesButton.setVisibility(visible);
-                creditsButton.setVisibility(visible);
-                bugButton.setVisibility(visible);
-            }
-        });
-
-        filtersButton.setOnClickListener(new View.OnClickListener() {
+        /*filtersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "FILTERS", Toast.LENGTH_LONG).show();
@@ -113,7 +91,7 @@ public class MainActivity extends Activity{
                 intent.putExtra(Intent.EXTRA_TEXT, "Tell me what gone wrong :)");
                 startActivity(Intent.createChooser(intent, "Send Email"));
             }
-        });
+        });*/
     }
 
     /**
@@ -122,14 +100,6 @@ public class MainActivity extends Activity{
      */
     public void load(View view){
         ProgramManager.showChooser(this, null);
-    }
-
-    /**
-     * Shows popup menu.
-     * @param view menu's owner
-     */
-    public void showPopup(View view){
-        ProgramManager.showPopup(this, view);
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {

@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LoadingSavingPhotoActivity">
-
-    <FrameLayout
-        android:id="@+id/camera_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
 
     <!-- It must be first to it doesn't hide buttons -->
     <ImageView
@@ -26,7 +20,12 @@
         android:layout_gravity="right|top"
         android:src="@drawable/settings_icon"
         android:background="@null"
-        android:onClick="showPopup"/>
+        android:onClick="showPopup"
+
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"/>
 
     <ImageButton
         android:id="@+id/load_file"
@@ -35,7 +34,12 @@
         android:layout_gravity="bottom|left"
         android:onClick="load"
         android:src="@drawable/load_file_icon"
-        android:background="@null"/>
+        android:background="@null"
+
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"/>
 
     <ImageButton
         android:id="@+id/createImageB"
@@ -44,7 +48,76 @@
         android:layout_gravity="bottom|center_horizontal"
         android:onClick="save"
         android:src="@drawable/load_file_icon"
-        android:background="@null"/>
+        android:background="@null"
+
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"/>
+
+    <ImageButton
+        android:id="@+id/filters"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/filters_icon"
+        android:background="@null"
+        android:visibility="invisible"
+
+        android:layout_below="@+id/settings"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"/>
 
 
-</FrameLayout>
+    <ImageButton
+        android:id="@+id/share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/share_icon"
+        android:background="@null"
+        android:visibility="invisible"
+
+        android:layout_below="@+id/filters"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"/>
+
+    <ImageButton
+        android:id="@+id/languages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/languages_icon"
+        android:background="@null"
+        android:visibility="invisible"
+
+        android:layout_below="@id/share"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"/>
+
+    <ImageButton
+        android:id="@+id/credits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/credits_icon"
+        android:background="@null"
+        android:visibility="invisible"
+
+        android:layout_below="@+id/languages"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"/>
+
+    <ImageButton
+        android:id="@+id/bugs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/bug_icon"
+        android:background="@null"
+        android:visibility="invisible"
+
+        android:layout_below="@+id/credits"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"/>
+</RelativeLayout>
