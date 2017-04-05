@@ -22,4 +22,5 @@
     <string name="bug_nr">Błąd nr</string>
     <string name="bug">Opowiedź co nie działa :)</string>
     <string name="send">Wyślij E-mail</string>
+    <string name="choosing_sender">Udostępnij przez</string>
 </resources>

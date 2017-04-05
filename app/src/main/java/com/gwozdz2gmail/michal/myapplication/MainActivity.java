@@ -18,7 +18,7 @@ import java.util.Random;
 public class MainActivity extends Activity{
     private int visible = View.INVISIBLE;
     private static final String TAG = "AndroidCameraApi";
-    private ImageButton takePictureButton, settingsButton, filtersButton, shareButton, languagesButton, creditsButton, bugButton;
+    private ImageButton takePictureButton;
     protected static TextureView textureView;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private Camera2API camera2API;

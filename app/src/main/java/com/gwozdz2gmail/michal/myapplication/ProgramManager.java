@@ -4,23 +4,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v7.widget.PopupMenu;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -34,6 +25,7 @@ public class ProgramManager {
     private static int visible = View.INVISIBLE;
     private static ImageButton settingsButton, filtersButton, shareButton, languagesButton,
             creditsButton, bugButton;
+    private static boolean shouldDeleted = false;
     /**
      * Loading photo.
      * @param activity chooser's owner
@@ -43,7 +35,7 @@ public class ProgramManager {
         byte[] byteArray = null;
         if(image != null) {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            image.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, stream);
+            image.getBitmap().compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byteArray = stream.toByteArray();
         }
         Intent loadingIntent = new Intent(activity, LoadingSavingPhotoActivity.class);
@@ -51,18 +43,39 @@ public class ProgramManager {
         activity.startActivity(loadingIntent);
     }
 
+    /**
+     * Creates buttons for settings menu.
+     * @param activity activity that calls method
+     */
     public static void initSettingsButtons(Activity activity){
         settingsButton = (ImageButton) activity.findViewById(R.id.settings);
         filtersButton = (ImageButton) activity.findViewById(R.id.filters);
-        shareButton = (ImageButton) activity.findViewById(R.id.share);
+        if(!(activity instanceof MainActivity))
+            shareButton = (ImageButton) activity.findViewById(R.id.share);
         languagesButton = (ImageButton) activity.findViewById(R.id.languages);
         creditsButton = (ImageButton) activity.findViewById(R.id.credits);
         bugButton = (ImageButton) activity.findViewById(R.id.bugs);
-        addActionToSetttingsButton();
+        addActionToSetttingsButton(activity);
         initSettingsButtonListeners(activity);
     }
 
-    private static void addActionToSetttingsButton(){
+    /**
+     * Return information about if file of shared image should be deleted from folder.
+     * @return true when should be deleted, false otherwise
+     */
+    public static boolean isShouldDeleted(){
+        return shouldDeleted;
+    }
+
+    /**
+     * Sets obligation to delete file of shared image from folder.
+     * @param deleted true when should be deleted, false otherwise
+     */
+    public static void setShouldDeleted(boolean deleted){
+        shouldDeleted = deleted;
+    }
+
+    private static void addActionToSetttingsButton(final Activity activity){
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,7 +86,8 @@ public class ProgramManager {
                 }
 
                 filtersButton.setVisibility(visible);
-                shareButton.setVisibility(visible);
+                if(!(activity instanceof MainActivity))
+                    shareButton.setVisibility(visible);
                 languagesButton.setVisibility(visible);
                 creditsButton.setVisibility(visible);
                 bugButton.setVisibility(visible);
@@ -89,7 +103,8 @@ public class ProgramManager {
             }
         });
 
-        shareButton.setOnClickListener(new View.OnClickListener() {
+        if(!(activity instanceof MainActivity))
+            shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 share(activity);
@@ -160,25 +175,26 @@ public class ProgramManager {
     }
 
     private static void share(Activity activity){
-        Bitmap image = LoadingSavingPhotoActivity.getImage();
-        File filepath = Environment.getExternalStorageDirectory();
-        File dir = new File(filepath.getAbsolutePath() + "/Share Image Tutorial/");
-        dir.mkdirs();
-        File file = new File(dir, "sample_wallpaper.png");
-        Toast.makeText(activity, activity.getResources().getString(R.string.share), Toast.LENGTH_LONG).show();
-        OutputStream output;
-        try {
+        Resources resources = activity.getResources();
+        if(LoadingSavingPhotoActivity.getSelectedImage() != null) { // check if image is already saved
+            File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/");
+            if (!dir.exists()) dir.mkdirs();
+            File file = new File(dir, "temp.jpeg");
+            Toast.makeText(activity, resources.getString(R.string.share), Toast.LENGTH_LONG).show();
+            try (OutputStream output = new FileOutputStream(file)) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("image/jpeg");
+                LoadingSavingPhotoActivity.getImage().compress(Bitmap.CompressFormat.JPEG, 100, output);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                activity.startActivity(Intent.createChooser(shareIntent, resources.getString(R.string.choosing_sender)));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            shouldDeleted = true;
+        }else{
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("image/jpeg");
-            output = new FileOutputStream(file);
-            image.compress(Bitmap.CompressFormat.PNG, 100, output);
-            output.flush();
-            output.close();
-            Uri uri = Uri.fromFile(file);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-            activity.startActivity(shareIntent);
-        }catch (Exception e) {
-            e.printStackTrace();
+            shareIntent.putExtra(Intent.EXTRA_STREAM, LoadingSavingPhotoActivity.getSelectedImage());
+            activity.startActivity(Intent.createChooser(shareIntent, resources.getString(R.string.choosing_sender)));
         }
     }
 }

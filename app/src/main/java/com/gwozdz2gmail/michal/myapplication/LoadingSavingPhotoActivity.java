@@ -10,9 +10,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.PopupMenu;
-import android.util.Log;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -24,6 +21,7 @@ import java.util.Date;
 public class LoadingSavingPhotoActivity extends AppCompatActivity {
 
     private static ImageView image;
+    private static Uri selectedImage = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +39,7 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
             if(requestCode == 1){
-                Uri selectedImage = data.getData();
+                selectedImage = data.getData();
                 String[] filePath = {MediaStore.Images.Media.DATA};
                 Cursor c = getContentResolver().query(selectedImage, filePath, null, null, null);
                 c.moveToFirst();
@@ -49,13 +47,22 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
                 String picturePath = c.getString(columnIndex);
                 c.close();
                 Bitmap thumbnail = BitmapFactory.decodeFile(picturePath);
-                Log.w("path of image ", picturePath+"");
                 image.setImageBitmap(thumbnail);
             }
         }else{
             byte[] backupByteArray = getIntent().getByteArrayExtra("image");
             if(backupByteArray != null)
                 image.setImageBitmap(BitmapFactory.decodeByteArray(backupByteArray, 0, backupByteArray.length));
+        }
+    }
+
+    @Override
+    public void onRestart(){
+        super.onRestart();
+        if(ProgramManager.isShouldDeleted()) { // deleted temporary file after shared
+            new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/temp.jpeg")
+                    .delete();
+            ProgramManager.setShouldDeleted(false);
         }
     }
     /**
@@ -66,62 +73,40 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         ProgramManager.showChooser(this, ((BitmapDrawable)image.getDrawable()));
     }
 
+    /**
+     * Saves image to default folder named "Pictures" in Gallery.
+     * @param view method's owner
+     */
     public void save(View view) {
-        //It's first idea. It's working but we can't create our folder, because it creates default folder Pictures in Gallery
-        MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable)image.getDrawable()).getBitmap(),"MyFile.png", "Created file");
+        MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable)image.getDrawable()).getBitmap(), createFileName(), "Created file");
         Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
-
-        /* This is where the second idea begins. It's better idea, because we can create our
-        folder for this application for example OurApplicationFolder and this folder will be created
-        in Gallery. But be careful - saving process is strange - to displayed new folder you must for
-        example disconnect cabel from computer or restart phone and wait.
-         */
-        /*Bitmap map = ((BitmapDrawable)image.getDrawable()).getBitmap();
-        File pictureFile = getOutputMediaFile();
-        if (pictureFile == null) {
-            Log.d("TAG",
-                    "Error creating media file, check storage permissions: ");// e.getMessage());
-            return;
-        }
-        try {
-            FileOutputStream fos = new FileOutputStream(pictureFile);
-            map.compress(Bitmap.CompressFormat.PNG, 90, fos);
-            fos.close();
-            Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
-        } catch (FileNotFoundException e) {
-            Log.d("TAG", "File not found: " + e.getMessage());
-        } catch (IOException e) {
-            Log.d("TAG", "Error accessing file: " + e.getMessage());
-        }*/
     }
 
+    /**
+     * Returns URI from selected image recently.
+     * @return URI of selected image
+     */
+    public static Uri getSelectedImage(){
+        return selectedImage;
+    }
+
+    /**
+     * Sets URI for selected image recently.
+     * @param uri URI of selected image
+     */
+    public static void setSelectedImage(Uri uri){
+        selectedImage = uri;
+    }
+
+    /**
+     * Returns bitmap of actual selected image.
+     * @return bitmap of selected image
+     */
     public static Bitmap getImage(){
         return ((BitmapDrawable)image.getDrawable()).getBitmap();
     }
-    /**
-     * This is method for second idea of saving image.
-     * @return image file
-     */
-    private  File getOutputMediaFile(){
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + "/thisFolder");
 
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                return null;
-            }
-        }
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
-        File mediaFile;
-        String mImageName="MI_"+ timeStamp +".jpg";
-        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
-        return mediaFile;
+    private  String createFileName(){
+        return "FILE" + (new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date())) + ".jpeg";
     }
 }

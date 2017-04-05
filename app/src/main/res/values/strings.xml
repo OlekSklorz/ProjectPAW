@@ -21,4 +21,5 @@
     <string name="bug_nr">Bug nr</string>
     <string name="bug">Tell me what gone wrong :)</string>
     <string name="send">Send Email</string>
+    <string name="choosing_sender">Share using</string>
 </resources>
