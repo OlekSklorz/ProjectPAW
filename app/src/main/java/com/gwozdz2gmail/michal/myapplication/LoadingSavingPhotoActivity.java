@@ -23,7 +23,7 @@ import java.util.Date;
 
 public class LoadingSavingPhotoActivity extends AppCompatActivity {
 
-    private ImageView image;
+    private static ImageView image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +95,9 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         }*/
     }
 
+    public static Bitmap getImage(){
+        return ((BitmapDrawable)image.getDrawable()).getBitmap();
+    }
     /**
      * This is method for second idea of saving image.
      * @return image file

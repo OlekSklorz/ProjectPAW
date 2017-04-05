@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.widget.PopupMenu;
 import android.util.DisplayMetrics;
@@ -24,6 +25,8 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Random;
 
@@ -89,7 +92,7 @@ public class ProgramManager {
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, activity.getResources().getString(R.string.share), Toast.LENGTH_LONG).show();
+                share(activity);
             }
         });
 
@@ -154,5 +157,28 @@ public class ProgramManager {
         intent.putExtra(Intent.EXTRA_SUBJECT, resources.getString(R.string.bug_nr) + random.nextInt());
         intent.putExtra(Intent.EXTRA_TEXT, resources.getString(R.string.bug));
         activity.startActivity(Intent.createChooser(intent, resources.getString(R.string.send)));
+    }
+
+    private static void share(Activity activity){
+        Bitmap image = LoadingSavingPhotoActivity.getImage();
+        File filepath = Environment.getExternalStorageDirectory();
+        File dir = new File(filepath.getAbsolutePath() + "/Share Image Tutorial/");
+        dir.mkdirs();
+        File file = new File(dir, "sample_wallpaper.png");
+        Toast.makeText(activity, activity.getResources().getString(R.string.share), Toast.LENGTH_LONG).show();
+        OutputStream output;
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("image/jpeg");
+            output = new FileOutputStream(file);
+            image.compress(Bitmap.CompressFormat.PNG, 100, output);
+            output.flush();
+            output.close();
+            Uri uri = Uri.fromFile(file);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            activity.startActivity(shareIntent);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

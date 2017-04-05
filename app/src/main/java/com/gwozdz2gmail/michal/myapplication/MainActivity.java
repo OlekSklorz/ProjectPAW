@@ -48,50 +48,6 @@ public class MainActivity extends Activity{
                 camera2API.takePicture();
             }
         });
-
-        /*filtersButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "FILTERS", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "SHARE", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        languagesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "LANGUAGES", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        creditsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "CREDITS", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(MainActivity.this, CreditsActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        bugButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Random random = new Random();
-                Toast.makeText(MainActivity.this, "BUG REPORTS", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(Intent.ACTION_SENDTO);
-                intent.setType("text/plain");
-                intent.setData(Uri.parse("mailto:" + "zuliq94@gmail.com"));
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Bug nr. " + random.nextInt());
-                intent.putExtra(Intent.EXTRA_TEXT, "Tell me what gone wrong :)");
-                startActivity(Intent.createChooser(intent, "Send Email"));
-            }
-        });*/
     }
 
     /**
