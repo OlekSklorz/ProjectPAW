@@ -16,7 +16,6 @@ import android.widget.Toast;
 import java.util.Random;
 
 public class MainActivity extends Activity{
-    private int visible = View.INVISIBLE;
     private static final String TAG = "AndroidCameraApi";
     private ImageButton takePictureButton;
     protected static TextureView textureView;

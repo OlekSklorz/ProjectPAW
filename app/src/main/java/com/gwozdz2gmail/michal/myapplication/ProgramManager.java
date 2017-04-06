@@ -96,41 +96,73 @@ public class ProgramManager {
     }
 
     private static void initSettingsButtonListeners(final Activity activity){
-        filtersButton.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, activity.getResources().getString(R.string.filters), Toast.LENGTH_LONG).show();
+                switch(v.getId()) {
+                    case(R.id.filters) :
+                        Toast.makeText(activity, activity.getResources().getString(R.string.filters), Toast.LENGTH_LONG).show();
+                        break;
+                    case(R.id.share) :
+                        share(activity);
+                        break;
+                    case(R.id.languages) :
+                        showLanguageDialog(activity);
+                        break;
+                    case(R.id.credits) :
+                        showAbout(activity);
+                        break;
+                    case(R.id.bugs) :
+                        showBugActivity(activity);
+                        break;
+                }
             }
-        });
+        };
 
+        filtersButton.setOnClickListener(listener);
         if(!(activity instanceof MainActivity))
-            shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                share(activity);
-            }
-        });
+        {
+            shareButton.setOnClickListener(listener);
+        }
+        languagesButton.setOnClickListener(listener);
+        creditsButton.setOnClickListener(listener);
+        bugButton.setOnClickListener(listener);
 
-        languagesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showLanguageDialog(activity);
-            }
-        });
-
-        creditsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAbout(activity);
-            }
-        });
-
-        bugButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showBugActivity(activity);
-            }
-        });
+//        filtersButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(activity, activity.getResources().getString(R.string.filters), Toast.LENGTH_LONG).show();
+//            }
+//        });
+//
+//        if(!(activity instanceof MainActivity))
+//            shareButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                share(activity);
+//            }
+//        });
+//
+//        languagesButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showLanguageDialog(activity);
+//            }
+//        });
+//
+//        creditsButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showAbout(activity);
+//            }
+//        });
+//
+//        bugButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showBugActivity(activity);
+//            }
+//        });
     }
 
     private static void showAbout(Activity activity){
