@@ -48,7 +48,7 @@ public class ProgramManager {
      * Creates buttons for settings menu.
      * @param activity activity that calls method
      */
-    public static void initSettingsButtons(Activity activity){
+    static void initSettingsButtons(Activity activity){
         settingsButton = (ImageButton) activity.findViewById(R.id.settings);
         filtersButton = (ImageButton) activity.findViewById(R.id.filters);
         if(!(activity instanceof MainActivity))
