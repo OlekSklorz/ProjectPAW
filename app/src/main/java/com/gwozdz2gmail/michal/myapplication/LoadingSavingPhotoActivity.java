@@ -106,6 +106,10 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         return ((BitmapDrawable)image.getDrawable()).getBitmap();
     }
 
+    public void returnToCamera(View view){
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
     private  String createFileName(){
         return "FILE" + (new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date())) + ".jpeg";
     }
