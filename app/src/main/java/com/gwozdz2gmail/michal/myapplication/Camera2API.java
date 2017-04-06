@@ -46,6 +46,7 @@ import java.util.List;
  */
 
 public class Camera2API {
+    int mode = 0;
     private static final String TAG = "AndroidCameraApi";
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
@@ -54,6 +55,7 @@ public class Camera2API {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+
     private String cameraId;
     private CameraDevice cameraDevice;
     private CameraCaptureSession cameraCaptureSessions;
@@ -244,6 +246,8 @@ public class Camera2API {
             Log.e(TAG, "updatePreview error, return");
         }
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+        captureRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, mode);
+
         try {
             cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
         } catch (CameraAccessException e) {
@@ -311,4 +315,14 @@ public class Camera2API {
     private String getFrontCameraID(CameraManager manager) throws CameraAccessException {
         return manager.getCameraIdList()[1];
     }
+
+    /**
+     *
+     * @param mode 0 = off, 1 = mono, 2 = negative, 3 = solarize, 4 = sepia
+     */
+    public void setFilter(int mode) {
+        this.mode = mode;
+        updatePreview();
+    }
+
 }

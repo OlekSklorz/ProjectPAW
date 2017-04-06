@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -38,6 +39,36 @@ public class MainActivity extends Activity{
 
         takePictureButton = (ImageButton) findViewById(R.id.btn_take_picture);
         ProgramManager.initSettingsButtons(this);
+
+        View.OnClickListener listener = new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                switch(v.getId()) {
+                    case(R.id.off_filter) :
+                        camera2API.setFilter(0);
+                    break;
+                    case(R.id.mono_filter) :
+                        camera2API.setFilter(1);
+                    break;
+                    case(R.id.negative_filter) :
+                        camera2API.setFilter(2);
+                    break;
+                    case(R.id.solarize_filter) :
+                        camera2API.setFilter(3);
+                    break;
+                    case(R.id.sepia_filter) :
+                        camera2API.setFilter(4);
+                    break;
+                }
+            }
+        };
+
+        ProgramManager.offButton.setOnClickListener(listener);
+        ProgramManager.monoButton.setOnClickListener(listener);
+        ProgramManager.negativeButton.setOnClickListener(listener);
+        ProgramManager.solarizeButton.setOnClickListener(listener);
+        ProgramManager.sepiaButton.setOnClickListener(listener);
     }
 
     private void initListeners() {

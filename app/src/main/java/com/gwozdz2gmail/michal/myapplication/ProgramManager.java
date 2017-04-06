@@ -6,7 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.hardware.camera2.CaptureRequest;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -23,8 +25,9 @@ import java.util.Random;
 
 public class ProgramManager {
     private static int visible = View.INVISIBLE;
-    private static ImageButton settingsButton, filtersButton, shareButton, languagesButton,
-            creditsButton, bugButton;
+    private static int visible_filters = View.INVISIBLE;
+    public static ImageButton settingsButton, filtersButton, shareButton, languagesButton,
+            creditsButton, bugButton, offButton, monoButton, negativeButton, solarizeButton, sepiaButton;
     private static boolean shouldDeleted = false;
     /**
      * Loading photo.
@@ -55,6 +58,13 @@ public class ProgramManager {
         languagesButton = (ImageButton) activity.findViewById(R.id.languages);
         creditsButton = (ImageButton) activity.findViewById(R.id.credits);
         bugButton = (ImageButton) activity.findViewById(R.id.bugs);
+
+        offButton = (ImageButton) activity.findViewById(R.id.off_filter);
+        monoButton = (ImageButton) activity.findViewById(R.id.mono_filter);
+        negativeButton = (ImageButton) activity.findViewById(R.id.negative_filter);
+        solarizeButton = (ImageButton) activity.findViewById(R.id.solarize_filter);
+        sepiaButton = (ImageButton) activity.findViewById(R.id.sepia_filter);
+
         addActionToSetttingsButton(activity);
         initSettingsButtonListeners(activity);
     }
@@ -91,6 +101,15 @@ public class ProgramManager {
                 languagesButton.setVisibility(visible);
                 creditsButton.setVisibility(visible);
                 bugButton.setVisibility(visible);
+
+                if(filtersButton.getVisibility() == View.INVISIBLE) {
+                    visible_filters = View.INVISIBLE;
+                    offButton.setVisibility(filtersButton.getVisibility());
+                    monoButton.setVisibility(filtersButton.getVisibility());
+                    negativeButton.setVisibility(filtersButton.getVisibility());
+                    solarizeButton.setVisibility(filtersButton.getVisibility());
+                    sepiaButton.setVisibility(filtersButton.getVisibility());
+                }
             }
         });
     }
@@ -100,22 +119,23 @@ public class ProgramManager {
             @Override
             public void onClick(View v) {
                 switch(v.getId()) {
-                    case(R.id.filters) :
-                        Toast.makeText(activity, activity.getResources().getString(R.string.filters), Toast.LENGTH_LONG).show();
+                    case (R.id.filters):
+                        showFilters(activity);
                         break;
-                    case(R.id.share) :
+                    case (R.id.share):
                         share(activity);
                         break;
-                    case(R.id.languages) :
+                    case (R.id.languages):
                         showLanguageDialog(activity);
                         break;
-                    case(R.id.credits) :
+                    case (R.id.credits):
                         showAbout(activity);
                         break;
-                    case(R.id.bugs) :
+                    case (R.id.bugs):
                         showBugActivity(activity);
                         break;
                 }
+
             }
         };
 
@@ -128,41 +148,25 @@ public class ProgramManager {
         creditsButton.setOnClickListener(listener);
         bugButton.setOnClickListener(listener);
 
-//        filtersButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(activity, activity.getResources().getString(R.string.filters), Toast.LENGTH_LONG).show();
-//            }
-//        });
-//
-//        if(!(activity instanceof MainActivity))
-//            shareButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                share(activity);
-//            }
-//        });
-//
-//        languagesButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showLanguageDialog(activity);
-//            }
-//        });
-//
-//        creditsButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showAbout(activity);
-//            }
-//        });
-//
-//        bugButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showBugActivity(activity);
-//            }
-//        });
+        offButton.setOnClickListener(listener);
+        monoButton.setOnClickListener(listener);
+        negativeButton.setOnClickListener(listener);
+        solarizeButton.setOnClickListener(listener);
+        sepiaButton.setOnClickListener(listener);
+    }
+
+    private static void showFilters(Activity activity) {
+        if(visible_filters == View.INVISIBLE) {
+            visible_filters = View.VISIBLE;
+        } else {
+            visible_filters = View.INVISIBLE;
+        }
+        Toast.makeText(activity, activity.getResources().getString(R.string.filters), Toast.LENGTH_LONG).show();
+        offButton.setVisibility(visible_filters);
+        monoButton.setVisibility(visible_filters);
+        negativeButton.setVisibility(visible_filters);
+        solarizeButton.setVisibility(visible_filters);
+        sepiaButton.setVisibility(visible_filters);
     }
 
     private static void showAbout(Activity activity){

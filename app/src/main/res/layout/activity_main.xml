@@ -104,5 +104,69 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"/>
+    
+    <ImageButton
+        android:id="@+id/off_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/off_icon"
+        android:background="@null"
+        android:visibility="invisible"
 
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"/>
+
+    <ImageButton
+        android:id="@+id/mono_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/mono_icon"
+        android:background="@null"
+        android:visibility="invisible"
+
+        android:layout_below="@id/off_filter"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"/>
+
+    <ImageButton
+        android:id="@+id/negative_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/negative_icon"
+        android:background="@null"
+        android:visibility="invisible"
+
+        android:layout_below="@id/mono_filter"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"/>
+
+    <ImageButton
+        android:id="@+id/solarize_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/solarize_icon"
+        android:background="@null"
+        android:visibility="invisible"
+
+        android:layout_below="@id/negative_filter"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"/>
+
+    <ImageButton
+        android:id="@+id/sepia_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/sepia_icon"
+        android:background="@null"
+        android:visibility="invisible"
+
+        android:layout_below="@id/solarize_filter"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"/>
 </RelativeLayout>
