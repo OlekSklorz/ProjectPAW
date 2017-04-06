@@ -1,11 +1,8 @@
 package com.gwozdz2gmail.michal.myapplication;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -13,8 +10,6 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
-import java.util.Random;
 
 public class MainActivity extends Activity{
     private static final String TAG = "AndroidCameraApi";
@@ -54,12 +49,14 @@ public class MainActivity extends Activity{
                     case(R.id.negative_filter) :
                         camera2API.setFilter(2);
                     break;
-                    case(R.id.solarize_filter) :
-                        camera2API.setFilter(3);
+                    case(R.id.white_beard_filter) :
+                        camera2API.setFilter(6);
                     break;
                     case(R.id.sepia_filter) :
                         camera2API.setFilter(4);
                     break;
+                    case(R.id.black_beard_filter) :
+                        camera2API.setFilter(7);
                 }
             }
         };
@@ -67,8 +64,9 @@ public class MainActivity extends Activity{
         ProgramManager.offButton.setOnClickListener(listener);
         ProgramManager.monoButton.setOnClickListener(listener);
         ProgramManager.negativeButton.setOnClickListener(listener);
-        ProgramManager.solarizeButton.setOnClickListener(listener);
+        ProgramManager.whiteBeardButton.setOnClickListener(listener);
         ProgramManager.sepiaButton.setOnClickListener(listener);
+        ProgramManager.blackBeardButton.setOnClickListener(listener);
     }
 
     private void initListeners() {

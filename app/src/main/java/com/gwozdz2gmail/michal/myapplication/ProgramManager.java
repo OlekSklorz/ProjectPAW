@@ -6,12 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
-import android.hardware.camera2.CaptureRequest;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -27,7 +24,8 @@ public class ProgramManager {
     private static int visible = View.INVISIBLE;
     private static int visible_filters = View.INVISIBLE;
     public static ImageButton settingsButton, filtersButton, shareButton, languagesButton,
-            creditsButton, bugButton, offButton, monoButton, negativeButton, solarizeButton, sepiaButton;
+            creditsButton, bugButton, offButton, monoButton, negativeButton,
+            whiteBeardButton, sepiaButton, blackBeardButton;
     private static boolean shouldDeleted = false;
     /**
      * Loading photo.
@@ -62,8 +60,9 @@ public class ProgramManager {
         offButton = (ImageButton) activity.findViewById(R.id.off_filter);
         monoButton = (ImageButton) activity.findViewById(R.id.mono_filter);
         negativeButton = (ImageButton) activity.findViewById(R.id.negative_filter);
-        solarizeButton = (ImageButton) activity.findViewById(R.id.solarize_filter);
+        whiteBeardButton = (ImageButton) activity.findViewById(R.id.white_beard_filter);
         sepiaButton = (ImageButton) activity.findViewById(R.id.sepia_filter);
+        blackBeardButton = (ImageButton) activity.findViewById(R.id.black_beard_filter);
 
         addActionToSetttingsButton(activity);
         initSettingsButtonListeners(activity);
@@ -107,8 +106,9 @@ public class ProgramManager {
                     offButton.setVisibility(filtersButton.getVisibility());
                     monoButton.setVisibility(filtersButton.getVisibility());
                     negativeButton.setVisibility(filtersButton.getVisibility());
-                    solarizeButton.setVisibility(filtersButton.getVisibility());
+                    whiteBeardButton.setVisibility(filtersButton.getVisibility());
                     sepiaButton.setVisibility(filtersButton.getVisibility());
+                    blackBeardButton.setVisibility(filtersButton.getVisibility());
                 }
             }
         });
@@ -147,12 +147,6 @@ public class ProgramManager {
         languagesButton.setOnClickListener(listener);
         creditsButton.setOnClickListener(listener);
         bugButton.setOnClickListener(listener);
-
-        offButton.setOnClickListener(listener);
-        monoButton.setOnClickListener(listener);
-        negativeButton.setOnClickListener(listener);
-        solarizeButton.setOnClickListener(listener);
-        sepiaButton.setOnClickListener(listener);
     }
 
     private static void showFilters(Activity activity) {
@@ -165,8 +159,9 @@ public class ProgramManager {
         offButton.setVisibility(visible_filters);
         monoButton.setVisibility(visible_filters);
         negativeButton.setVisibility(visible_filters);
-        solarizeButton.setVisibility(visible_filters);
+        whiteBeardButton.setVisibility(visible_filters);
         sepiaButton.setVisibility(visible_filters);
+        blackBeardButton.setVisibility(visible_filters);
     }
 
     private static void showAbout(Activity activity){

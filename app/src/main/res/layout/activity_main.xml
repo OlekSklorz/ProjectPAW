@@ -145,7 +145,7 @@
         android:layout_marginLeft="16dp"/>
 
     <ImageButton
-        android:id="@+id/solarize_filter"
+        android:id="@+id/white_beard_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/solarize_icon"
@@ -165,7 +165,20 @@
         android:background="@null"
         android:visibility="invisible"
 
-        android:layout_below="@id/solarize_filter"
+        android:layout_below="@id/white_beard_filter"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"/>
+
+    <ImageButton
+        android:id="@+id/black_beard_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/sepia_icon"
+        android:background="@null"
+        android:visibility="invisible"
+
+        android:layout_below="@id/sepia_filter"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"/>
