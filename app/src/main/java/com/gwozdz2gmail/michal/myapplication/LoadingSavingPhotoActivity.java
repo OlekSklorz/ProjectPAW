@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -32,14 +33,11 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
 
     private static ImageView image;
     private static Uri selectedImage = null;
-    private static ArrayList<Integer> counters = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_photo);
-        if(counters == null) counters = new ArrayList<>();
-        counters.add(counters.size(), 1);
         image = (ImageView) findViewById(R.id.imageView);
         startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images
                 .Media.EXTERNAL_CONTENT_URI), 1);
@@ -47,10 +45,10 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK){
-            if(requestCode == 1){
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
                 selectedImage = data.getData();
                 String[] filePath = {MediaStore.Images.Media.DATA};
                 Cursor c = getContentResolver().query(selectedImage, filePath, null, null, null);
@@ -58,111 +56,13 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
                 int columnIndex = c.getColumnIndex(filePath[0]);
                 String picturePath = c.getString(columnIndex);
                 c.close();
-               /* Bitmap thumbnail = BitmapFactory.decodeFile(picturePath);
-                Bitmap d = new BitmapDrawable(getResources() , thumbnail).getBitmap();
-                int nh = (int) ( d.getHeight() * (4096.0 / d.getWidth()) );
-                Bitmap scaled = Bitmap.createScaledBitmap(d, 4096, nh, true); // first version
-                //iv.setImageBitmap(scaled);
-               // int[] maxTextureSize = new int[1];
-               // GLES10.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxTextureSize, 0);
-              //  Log.d("JESTEM",   " "  + maxTextureSize[0]);
-                image.setImageBitmap(scaled);*/
-
-                DisplayMetrics displayMetrics = new DisplayMetrics();
-                getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                int height = displayMetrics.heightPixels;
-                int width = displayMetrics.widthPixels;
-
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(picturePath, options);
-                int imageHeight = options.outHeight;
-                int imageWidth = options.outWidth;
-                //String imageType = options.outMimeType;
-                options.inSampleSize = calculateInSampleSize(options, width, width);
-                options.inJustDecodeBounds = false;
-                Bitmap b = BitmapFactory.decodeFile(picturePath, options);
-                ExifInterface exif = null;
-                try {
-                    exif = new ExifInterface(picturePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                        ExifInterface.ORIENTATION_UNDEFINED);
-                Bitmap bmRotated = rotateBitmap(b, orientation);
-                image.setImageBitmap(bmRotated);
+                image.setImageBitmap(adjustImageDimension(getWindowManager(), picturePath));
             }
-        }else{
+        } else {
             byte[] backupByteArray = getIntent().getByteArrayExtra("image");
-            if(backupByteArray != null)
+            if (backupByteArray != null)
                 image.setImageBitmap(BitmapFactory.decodeByteArray(backupByteArray, 0, backupByteArray.length));
         }
-    }
-    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
-
-        Matrix matrix = new Matrix();
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_NORMAL:
-                return bitmap;
-            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
-                matrix.setScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                matrix.setRotate(180);
-                break;
-            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
-                matrix.setRotate(180);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_TRANSPOSE:
-                matrix.setRotate(90);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                matrix.setRotate(90);
-                break;
-            case ExifInterface.ORIENTATION_TRANSVERSE:
-                matrix.setRotate(-90);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                matrix.setRotate(-90);
-                break;
-            default:
-                return bitmap;
-        }
-        try {
-            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            bitmap.recycle();
-            return bmRotated;
-        }
-        catch (OutOfMemoryError e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
     }
 
     @Override
@@ -173,15 +73,6 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
                     .delete();
             ProgramManager.setShouldDeleted(false);
         }
-    }
-
-    @Override
-    public void onBackPressed(){
-        Log.d("JESTEM", counters.get(0) + "");
-        if(counters.get(0) == 1){
-            startActivity(new Intent(this, MainActivity.class));
-        }
-        super.onBackPressed();
     }
     /**
      * Loading photo.
@@ -231,5 +122,84 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
 
     private  String createFileName(){
         return "FILE" + (new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date())) + ".jpeg";
+    }
+
+    private static Bitmap adjustImageDimension(WindowManager manager, String picturePath){
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        manager.getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(picturePath, options);
+        options.inSampleSize = calculateInSampleSize(options, width, width);
+        options.inJustDecodeBounds = false;
+        Bitmap scaledBitmap = BitmapFactory.decodeFile(picturePath, options);
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(picturePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return rotateBitmap(scaledBitmap, exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED));
+    }
+    private static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_NORMAL:
+                return bitmap;
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.setScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_TRANSPOSE:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_TRANSVERSE:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(-90);
+                break;
+            default:
+                return bitmap;
+        }
+        try {
+            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            bitmap.recycle();
+            return bmRotated;
+        }
+        catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 }
