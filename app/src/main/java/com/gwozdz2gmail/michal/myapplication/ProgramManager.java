@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ public class ProgramManager {
             creditsButton, bugButton, offButton, monoButton, negativeButton,
             whiteBeardButton, sepiaButton, blackBeardButton;
     private static boolean shouldDeleted = false;
+    private static boolean returnFromLoading = false;
     /**
      * Loading photo.
      * @param activity chooser's owner
@@ -84,6 +86,13 @@ public class ProgramManager {
         shouldDeleted = deleted;
     }
 
+    public static boolean isReturnFromLoading(){
+        return returnFromLoading;
+    }
+
+    public static void setReturnFromLoading(boolean isReturn){
+        returnFromLoading = isReturn;
+    }
     private static void addActionToSetttingsButton(final Activity activity){
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override

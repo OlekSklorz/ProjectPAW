@@ -1,10 +1,12 @@
 package com.gwozdz2gmail.michal.myapplication;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
