@@ -3,6 +3,7 @@ package com.gwozdz2gmail.michal.myapplication;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,6 +32,7 @@ import android.util.SparseIntArray;
 import android.view.Surface;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -172,17 +174,17 @@ public class Camera2API {
                     }
                 }
 
-                private void save(byte[] bytes) throws IOException {
-                    OutputStream output = null;
-                    try {
-                        output = new FileOutputStream(file);
-                        output.write(bytes);
-                    } finally {
-                        if (null != output) {
-                            output.close();
-                        }
-                    }
-                }
+//                private void save(byte[] bytes) throws IOException {
+//                    OutputStream output = null;
+//                    try {
+//                        output = new FileOutputStream(file);
+//                        output.write(bytes);
+//                    } finally {
+//                        if (null != output) {
+//                            output.close();
+//                        }
+//                    }
+//                }
             };
             reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
             final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
@@ -270,12 +272,15 @@ public class Camera2API {
         }
     }
 
-    void openCamera() {
+    void openCamera(int i) {
         CameraManager manager = createCameraManager();
         Log.e(TAG, "is camera open");
         try {
-            cameraId = getRearCameraID(manager);
-//            cameraId = getFrontCameraID(manager);
+            if(i == 0) {
+                cameraId = getRearCameraID(manager);
+            } else if(i == 1) {
+                cameraId = getFrontCameraID(manager);
+            }
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;

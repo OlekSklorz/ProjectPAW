@@ -17,11 +17,12 @@ import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends Activity{
     private static final String TAG = "AndroidCameraApi";
-    private ImageButton takePictureButton;
+    private ImageButton takePictureButton, frontRear;
     protected static TextureView textureView;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private Camera2API camera2API;
     private byte[] byteArray = null;
+    private int frontRearId = 0;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +32,7 @@ public class MainActivity extends Activity{
 
         initViewElements();
         initListeners();
+        initFrontRear();
     }
 
     private void initViewElements() {
@@ -83,6 +85,22 @@ public class MainActivity extends Activity{
         });
     }
 
+    private void initFrontRear() {
+        frontRear = (ImageButton) findViewById(R.id.front_rear);
+        frontRear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                camera2API.closeCamera();
+                if(frontRearId == 0) {
+                    frontRearId = 1;
+                } else if(frontRearId == 1) {
+                    frontRearId = 0;
+                }
+                camera2API.openCamera(frontRearId);
+            }
+        });
+    }
+
     /**
      * Loading photo.
      * @param view method's owner
@@ -96,7 +114,7 @@ public class MainActivity extends Activity{
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             //open your camera here
-            camera2API.openCamera();
+            camera2API.openCamera(frontRearId);
         }
 
         @Override
@@ -121,7 +139,7 @@ public class MainActivity extends Activity{
         Log.e(TAG, "onResume");
         camera2API.startBackgroundThread();
         if (textureView.isAvailable()) {
-            camera2API.openCamera();
+            camera2API.openCamera(frontRearId);
         } else {
             textureView.setSurfaceTextureListener(textureListener);
         }
