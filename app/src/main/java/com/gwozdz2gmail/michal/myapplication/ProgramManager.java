@@ -29,28 +29,25 @@ public class ProgramManager {
             whiteBeardButton, sepiaButton, blackBeardButton;
     private static boolean shouldDeleted = false;
     private static boolean returnFromLoading = false;
+    private static Bitmap lastImage;
     /**
      * Loading photo.
      * @param activity chooser's owner
-     * @param image drawable image to be send as a backup. It may be null if we don't want to send something.
+     * @param image bitmap which shoulb be saved as a backup. It may be null if we don't want to save anything.
      */
-    public static void showChooser(final Activity activity, BitmapDrawable image){
-        byte[] byteArray = null;
-        if(image != null) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            image.getBitmap().compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            byteArray = stream.toByteArray();
-        }
-        Intent loadingIntent = new Intent(activity, LoadingSavingPhotoActivity.class);
-        loadingIntent.putExtra("image", byteArray);
-        activity.startActivity(loadingIntent);
+    public static void showChooser(final Activity activity, Bitmap image){
+        if(image != null) lastImage = image;
+        activity.startActivity(new Intent(activity, LoadingSavingPhotoActivity.class));
     }
 
+    public static Bitmap getLastImage(){
+        return lastImage;
+    }
     /**
      * Creates buttons for settings menu.
      * @param activity activity that calls method
      */
-    static void initSettingsButtons(Activity activity){
+    public static void initSettingsButtons(Activity activity){
         settingsButton = (ImageButton) activity.findViewById(R.id.settings);
         filtersButton = (ImageButton) activity.findViewById(R.id.filters);
         if(!(activity instanceof MainActivity))
