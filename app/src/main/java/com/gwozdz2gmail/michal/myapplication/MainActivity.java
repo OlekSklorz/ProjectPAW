@@ -160,7 +160,6 @@ public class MainActivity extends Activity{
             loadingActivity.putExtra("image", byteArray);
             startActivity(loadingActivity);
         } else {
-            Toast.makeText(this, "ERROR", Toast.LENGTH_LONG).show();
         }
     }
 }

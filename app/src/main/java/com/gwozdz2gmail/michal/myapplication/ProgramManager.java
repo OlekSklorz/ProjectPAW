@@ -24,8 +24,6 @@ import java.util.Random;
 import static android.app.Activity.RESULT_OK;
 
 public class ProgramManager {
-    private static Activity activity1;
-    private static byte[] byteArray;
     private static int EXTRA_VISIBLE = View.INVISIBLE;
     private static int EXTRA_VISIBLE_FILTERS = View.INVISIBLE;
     public static ImageButton settingsButton, filtersButton, shareButton, languagesButton,
@@ -93,7 +91,6 @@ public class ProgramManager {
         cameraBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                activity.finish();
                 Intent intent = new Intent(activity, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 activity.startActivity(intent);
@@ -152,7 +149,6 @@ public class ProgramManager {
                         setBugActivity(activity);
                         break;
                 }
-
             }
         };
 

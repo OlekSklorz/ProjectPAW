@@ -5,13 +5,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoadingSavingPhotoActivity">
+    android:orientation="vertical"
+    android:theme="@style/AppTheme" >
+
 
     <!-- It must be first to it doesn't hide buttons -->
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/createImageB"/>
 
     <ImageButton
         android:id="@+id/settings"
@@ -38,8 +41,8 @@
 
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"/>
 
     <ImageButton
         android:id="@+id/createImageB"
@@ -52,8 +55,8 @@
 
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"/>
 
     <ImageButton
         android:id="@+id/filters"
