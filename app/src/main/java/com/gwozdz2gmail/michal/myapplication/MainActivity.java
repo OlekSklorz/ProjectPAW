@@ -1,7 +1,9 @@
 package com.gwozdz2gmail.michal.myapplication;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,12 +13,15 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+
 public class MainActivity extends Activity{
     private static final String TAG = "AndroidCameraApi";
     private ImageButton takePictureButton;
     protected static TextureView textureView;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private Camera2API camera2API;
+    private byte[] byteArray = null;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +38,7 @@ public class MainActivity extends Activity{
         textureView.setSurfaceTextureListener(textureListener);
 
         takePictureButton = (ImageButton) findViewById(R.id.btn_take_picture);
-        ProgramManager.initSettingsButtons(this);
+        ProgramManager.initButtons(this);
 
         View.OnClickListener listener = new View.OnClickListener() {
 
@@ -83,7 +88,8 @@ public class MainActivity extends Activity{
      * @param view method's owner
      */
     public void load(View view){
-        ProgramManager.showChooser(this, null);
+        Intent loadingIntent = new Intent(this, LoadingSavingPhotoActivity.class);
+        this.startActivityForResult(loadingIntent, 2);
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
@@ -140,5 +146,22 @@ public class MainActivity extends Activity{
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == 2 && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap bitmap = (Bitmap) extras.get("image");
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byteArray = stream.toByteArray();
+
+            Intent loadingActivity = new Intent(this, LoadingSavingPhotoActivity.class);
+            loadingActivity.putExtra("image", byteArray);
+            startActivity(loadingActivity);
+        } else {
+            Toast.makeText(this, "ERROR", Toast.LENGTH_LONG).show();
+        }
+    }
 }
 

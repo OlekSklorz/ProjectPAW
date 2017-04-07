@@ -14,12 +14,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class LoadingSavingPhotoActivity extends AppCompatActivity {
-
+    private static byte[] byteArray = null;
     private static ImageView EXTRA_IMAGE;
     private static Uri EXTRA_SELECTED_IMAGE = null;
 
@@ -31,29 +32,50 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         EXTRA_IMAGE = (ImageView) findViewById(R.id.imageView);
         startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images
                 .Media.EXTERNAL_CONTENT_URI), 1);
-        ProgramManager.initSettingsButtons(this);
+        ProgramManager.initButtons(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK){
-            if(requestCode == 1){
-                EXTRA_SELECTED_IMAGE = data.getData();
-                String[] filePath = {MediaStore.Images.Media.DATA};
-                Cursor c = getContentResolver().query(EXTRA_SELECTED_IMAGE, filePath, null, null, null);
-                c.moveToFirst();
-                int columnIndex = c.getColumnIndex(filePath[0]);
-                String picturePath = c.getString(columnIndex);
-                c.close();
-                Bitmap thumbnail = BitmapFactory.decodeFile(picturePath);
-                EXTRA_IMAGE.setImageBitmap(thumbnail);
+        switch(requestCode) {
+            case 1 : {
+                if(resultCode == RESULT_OK){
+                    if(requestCode == 1){
+                        EXTRA_SELECTED_IMAGE = data.getData();
+                        String[] filePath = {MediaStore.Images.Media.DATA};
+                        Cursor c = getContentResolver().query(EXTRA_SELECTED_IMAGE, filePath, null, null, null);
+                        c.moveToFirst();
+                        int columnIndex = c.getColumnIndex(filePath[0]);
+                        String picturePath = c.getString(columnIndex);
+                        c.close();
+                        Bitmap thumbnail = BitmapFactory.decodeFile(picturePath);
+                        EXTRA_IMAGE.setImageBitmap(thumbnail);
+                    }
+                }else{
+                    byte[] backupByteArray = getIntent().getByteArrayExtra("image");
+                    if(backupByteArray != null)
+                        EXTRA_IMAGE.setImageBitmap(BitmapFactory.decodeByteArray(backupByteArray, 0, backupByteArray.length));
+                }
+                break;
             }
-        }else{
-            byte[] backupByteArray = getIntent().getByteArrayExtra("image");
-            if(backupByteArray != null)
-                EXTRA_IMAGE.setImageBitmap(BitmapFactory.decodeByteArray(backupByteArray, 0, backupByteArray.length));
+            case 2 : {
+                if(resultCode == 1 && resultCode == RESULT_OK) {
+                    Bundle extras = data.getExtras();
+                    Bitmap bitmap = (Bitmap) extras.get("image");
+
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    byteArray = stream.toByteArray();
+
+                    Intent loadingActivity = new Intent(this, LoadingSavingPhotoActivity.class);
+                    loadingActivity.putExtra("image", byteArray);
+                    startActivity(loadingActivity);
+                } else { }
+                break;
+            }
         }
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Override
@@ -70,7 +92,8 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
      * @param view method's owner
      */
     public void load(View view){
-        ProgramManager.showChooser(this, ((BitmapDrawable) EXTRA_IMAGE.getDrawable()));
+        Intent loadingIntent = new Intent(this, LoadingSavingPhotoActivity.class);
+        this.startActivityForResult(loadingIntent, 2);
     }
 
     /**

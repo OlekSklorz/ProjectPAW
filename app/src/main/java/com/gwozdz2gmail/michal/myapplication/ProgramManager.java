@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.ImageButton;
@@ -20,56 +21,26 @@ import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Random;
 
+import static android.app.Activity.RESULT_OK;
+
 public class ProgramManager {
+    private static Activity activity1;
+    private static byte[] byteArray;
     private static int EXTRA_VISIBLE = View.INVISIBLE;
     private static int EXTRA_VISIBLE_FILTERS = View.INVISIBLE;
     public static ImageButton settingsButton, filtersButton, shareButton, languagesButton,
             creditsButton, bugButton, offButton, monoButton, negativeButton, cameraBackButton,
             whiteBeardButton, sepiaButton, blackBeardButton;
     private static boolean EXTRA_SHOULD_DELETED = false;
-    /**
-     * Loading photo.
-     * @param activity chooser's owner
-     * @param image drawable image to be send as a backup. It may be null if we don't want to send something.
-     */
-    public static void showChooser(final Activity activity, BitmapDrawable image){
-        byte[] byteArray = null;
-        if(image != null) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            image.getBitmap().compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            byteArray = stream.toByteArray();
-        }
-        Intent loadingIntent = new Intent(activity, LoadingSavingPhotoActivity.class);
-        loadingIntent.putExtra("image", byteArray);
-        activity.startActivity(loadingIntent);
-    }
 
     /**
      * Creates buttons for settings menu.
      * @param activity activity that calls method
      */
-    static void initSettingsButtons(Activity activity){
-        settingsButton = (ImageButton) activity.findViewById(R.id.settings);
-        filtersButton = (ImageButton) activity.findViewById(R.id.filters);
-        if(!(activity instanceof MainActivity)) {
-            shareButton = (ImageButton) activity.findViewById(R.id.share);
-            cameraBackButton = (ImageButton) activity.findViewById(R.id.camera_back);
-            addActionToBackButton(activity);
-
-        }
-        languagesButton = (ImageButton) activity.findViewById(R.id.languages);
-        creditsButton = (ImageButton) activity.findViewById(R.id.credits);
-        bugButton = (ImageButton) activity.findViewById(R.id.bugs);
-
-        offButton = (ImageButton) activity.findViewById(R.id.off_filter);
-        monoButton = (ImageButton) activity.findViewById(R.id.mono_filter);
-        negativeButton = (ImageButton) activity.findViewById(R.id.negative_filter);
-        whiteBeardButton = (ImageButton) activity.findViewById(R.id.white_beard_filter);
-        sepiaButton = (ImageButton) activity.findViewById(R.id.sepia_filter);
-        blackBeardButton = (ImageButton) activity.findViewById(R.id.black_beard_filter);
-
-        addActionToSetttingsButton(activity);
-        initSettingsButtonListeners(activity);
+    static void initButtons(Activity activity){
+        initSettingsButtons(activity);
+        initFilterButtons(activity);
+        initCameraBackButton(activity);
     }
 
     /**
@@ -88,6 +59,36 @@ public class ProgramManager {
         EXTRA_SHOULD_DELETED = deleted;
     }
 
+    private static void initSettingsButtons(Activity activity) {
+        settingsButton = (ImageButton) activity.findViewById(R.id.settings);
+        filtersButton = (ImageButton) activity.findViewById(R.id.filters);
+        if(!(activity instanceof MainActivity)) {
+            shareButton = (ImageButton) activity.findViewById(R.id.share);
+        }
+        languagesButton = (ImageButton) activity.findViewById(R.id.languages);
+        creditsButton = (ImageButton) activity.findViewById(R.id.credits);
+        bugButton = (ImageButton) activity.findViewById(R.id.bugs);
+
+        initSettingsButtonListeners(activity);
+        setVisibilitySettingButtons(activity);
+    }
+
+    private static void initFilterButtons(Activity activity) {
+        offButton = (ImageButton) activity.findViewById(R.id.off_filter);
+        monoButton = (ImageButton) activity.findViewById(R.id.mono_filter);
+        negativeButton = (ImageButton) activity.findViewById(R.id.negative_filter);
+        whiteBeardButton = (ImageButton) activity.findViewById(R.id.white_beard_filter);
+        sepiaButton = (ImageButton) activity.findViewById(R.id.sepia_filter);
+        blackBeardButton = (ImageButton) activity.findViewById(R.id.black_beard_filter);
+    }
+
+    private static void initCameraBackButton(Activity activity) {
+        if(!(activity instanceof MainActivity)) {
+            cameraBackButton = (ImageButton) activity.findViewById(R.id.camera_back);
+            addActionToBackButton(activity);
+        }
+    }
+
     private static void addActionToBackButton(final Activity activity) {
         cameraBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +101,7 @@ public class ProgramManager {
         });
     }
 
-    private static void addActionToSetttingsButton(final Activity activity){
+    private static void setVisibilitySettingButtons(final Activity activity){
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,19 +137,19 @@ public class ProgramManager {
             public void onClick(View v) {
                 switch(v.getId()) {
                     case (R.id.filters):
-                        showFilters(activity);
+                        setVisibilityFilterButotns(activity);
                         break;
                     case (R.id.share):
-                        share(activity);
+                        setShareActivity(activity);
                         break;
                     case (R.id.languages):
-                        showLanguageDialog(activity);
+                        setLanguageActivity(activity);
                         break;
                     case (R.id.credits):
-                        showAbout(activity);
+                        setCreditsActivity(activity);
                         break;
                     case (R.id.bugs):
-                        showBugActivity(activity);
+                        setBugActivity(activity);
                         break;
                 }
 
@@ -165,7 +166,7 @@ public class ProgramManager {
         bugButton.setOnClickListener(listener);
     }
 
-    private static void showFilters(Activity activity) {
+    private static void setVisibilityFilterButotns(Activity activity) {
         if(EXTRA_VISIBLE_FILTERS == View.INVISIBLE) {
             EXTRA_VISIBLE_FILTERS = View.VISIBLE;
         } else {
@@ -180,13 +181,13 @@ public class ProgramManager {
         blackBeardButton.setVisibility(EXTRA_VISIBLE_FILTERS);
     }
 
-    private static void showAbout(Activity activity){
+    private static void setCreditsActivity(Activity activity){
         Toast.makeText(activity, activity.getResources().getString(R.string.credits), Toast.LENGTH_LONG).show();
         Intent intent = new Intent(activity, CreditsActivity.class);
         activity.startActivity(intent);
     }
 
-    private static void showLanguageDialog(final Activity activity){
+    private static void setLanguageActivity(final Activity activity){
         Toast.makeText(activity, activity.getResources().getString(R.string.languages), Toast.LENGTH_LONG).show();
         final String language = Locale.getDefault().getDisplayLanguage();
         final Resources resources = activity.getResources();
@@ -209,7 +210,7 @@ public class ProgramManager {
         dialog.show();
     }
 
-    private static void showBugActivity(Activity activity){
+    private static void setBugActivity(Activity activity){
         Resources resources = activity.getResources();
         Random random = new Random();
         Toast.makeText(activity, resources.getString(R.string.report), Toast.LENGTH_LONG).show();
@@ -221,7 +222,7 @@ public class ProgramManager {
         activity.startActivity(Intent.createChooser(intent, resources.getString(R.string.send)));
     }
 
-    private static void share(Activity activity){
+    private static void setShareActivity(Activity activity){
         Resources resources = activity.getResources();
         if(LoadingSavingPhotoActivity.getExtraSelectedImage() != null) { // check if image is already saved
             File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/");
