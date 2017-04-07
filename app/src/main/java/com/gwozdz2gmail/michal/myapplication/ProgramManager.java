@@ -21,12 +21,12 @@ import java.util.Locale;
 import java.util.Random;
 
 public class ProgramManager {
-    private static int visible = View.INVISIBLE;
-    private static int visible_filters = View.INVISIBLE;
+    private static int EXTRA_VISIBLE = View.INVISIBLE;
+    private static int EXTRA_VISIBLE_FILTERS = View.INVISIBLE;
     public static ImageButton settingsButton, filtersButton, shareButton, languagesButton,
-            creditsButton, bugButton, offButton, monoButton, negativeButton,
+            creditsButton, bugButton, offButton, monoButton, negativeButton, cameraBackButton,
             whiteBeardButton, sepiaButton, blackBeardButton;
-    private static boolean shouldDeleted = false;
+    private static boolean EXTRA_SHOULD_DELETED = false;
     /**
      * Loading photo.
      * @param activity chooser's owner
@@ -51,8 +51,12 @@ public class ProgramManager {
     static void initSettingsButtons(Activity activity){
         settingsButton = (ImageButton) activity.findViewById(R.id.settings);
         filtersButton = (ImageButton) activity.findViewById(R.id.filters);
-        if(!(activity instanceof MainActivity))
+        if(!(activity instanceof MainActivity)) {
             shareButton = (ImageButton) activity.findViewById(R.id.share);
+            cameraBackButton = (ImageButton) activity.findViewById(R.id.camera_back);
+            addActionToBackButton(activity);
+
+        }
         languagesButton = (ImageButton) activity.findViewById(R.id.languages);
         creditsButton = (ImageButton) activity.findViewById(R.id.credits);
         bugButton = (ImageButton) activity.findViewById(R.id.bugs);
@@ -72,37 +76,49 @@ public class ProgramManager {
      * Return information about if file of shared image should be deleted from folder.
      * @return true when should be deleted, false otherwise
      */
-    public static boolean isShouldDeleted(){
-        return shouldDeleted;
+    public static boolean isExtraShouldDeleted(){
+        return EXTRA_SHOULD_DELETED;
     }
 
     /**
      * Sets obligation to delete file of shared image from folder.
      * @param deleted true when should be deleted, false otherwise
      */
-    public static void setShouldDeleted(boolean deleted){
-        shouldDeleted = deleted;
+    public static void setExtraShouldDeleted(boolean deleted){
+        EXTRA_SHOULD_DELETED = deleted;
+    }
+
+    private static void addActionToBackButton(final Activity activity) {
+        cameraBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                activity.finish();
+                Intent intent = new Intent(activity, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
+            }
+        });
     }
 
     private static void addActionToSetttingsButton(final Activity activity){
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(visible == View.INVISIBLE) {
-                    visible = View.VISIBLE;
+                if(EXTRA_VISIBLE == View.INVISIBLE) {
+                    EXTRA_VISIBLE = View.VISIBLE;
                 } else {
-                    visible = View.INVISIBLE;
+                    EXTRA_VISIBLE = View.INVISIBLE;
                 }
 
-                filtersButton.setVisibility(visible);
+                filtersButton.setVisibility(EXTRA_VISIBLE);
                 if(!(activity instanceof MainActivity))
-                    shareButton.setVisibility(visible);
-                languagesButton.setVisibility(visible);
-                creditsButton.setVisibility(visible);
-                bugButton.setVisibility(visible);
+                    shareButton.setVisibility(EXTRA_VISIBLE);
+                languagesButton.setVisibility(EXTRA_VISIBLE);
+                creditsButton.setVisibility(EXTRA_VISIBLE);
+                bugButton.setVisibility(EXTRA_VISIBLE);
 
                 if(filtersButton.getVisibility() == View.INVISIBLE) {
-                    visible_filters = View.INVISIBLE;
+                    EXTRA_VISIBLE_FILTERS = View.INVISIBLE;
                     offButton.setVisibility(filtersButton.getVisibility());
                     monoButton.setVisibility(filtersButton.getVisibility());
                     negativeButton.setVisibility(filtersButton.getVisibility());
@@ -150,18 +166,18 @@ public class ProgramManager {
     }
 
     private static void showFilters(Activity activity) {
-        if(visible_filters == View.INVISIBLE) {
-            visible_filters = View.VISIBLE;
+        if(EXTRA_VISIBLE_FILTERS == View.INVISIBLE) {
+            EXTRA_VISIBLE_FILTERS = View.VISIBLE;
         } else {
-            visible_filters = View.INVISIBLE;
+            EXTRA_VISIBLE_FILTERS = View.INVISIBLE;
         }
         Toast.makeText(activity, activity.getResources().getString(R.string.filters), Toast.LENGTH_LONG).show();
-        offButton.setVisibility(visible_filters);
-        monoButton.setVisibility(visible_filters);
-        negativeButton.setVisibility(visible_filters);
-        whiteBeardButton.setVisibility(visible_filters);
-        sepiaButton.setVisibility(visible_filters);
-        blackBeardButton.setVisibility(visible_filters);
+        offButton.setVisibility(EXTRA_VISIBLE_FILTERS);
+        monoButton.setVisibility(EXTRA_VISIBLE_FILTERS);
+        negativeButton.setVisibility(EXTRA_VISIBLE_FILTERS);
+        whiteBeardButton.setVisibility(EXTRA_VISIBLE_FILTERS);
+        sepiaButton.setVisibility(EXTRA_VISIBLE_FILTERS);
+        blackBeardButton.setVisibility(EXTRA_VISIBLE_FILTERS);
     }
 
     private static void showAbout(Activity activity){
@@ -207,7 +223,7 @@ public class ProgramManager {
 
     private static void share(Activity activity){
         Resources resources = activity.getResources();
-        if(LoadingSavingPhotoActivity.getSelectedImage() != null) { // check if image is already saved
+        if(LoadingSavingPhotoActivity.getExtraSelectedImage() != null) { // check if image is already saved
             File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/");
             if (!dir.exists()) dir.mkdirs();
             File file = new File(dir, "temp.jpeg");
@@ -215,16 +231,16 @@ public class ProgramManager {
             try (OutputStream output = new FileOutputStream(file)) {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("image/jpeg");
-                LoadingSavingPhotoActivity.getImage().compress(Bitmap.CompressFormat.JPEG, 100, output);
+                LoadingSavingPhotoActivity.getExtraImage().compress(Bitmap.CompressFormat.JPEG, 100, output);
                 shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
                 activity.startActivity(Intent.createChooser(shareIntent, resources.getString(R.string.choosing_sender)));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            shouldDeleted = true;
+            EXTRA_SHOULD_DELETED = true;
         }else{
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, LoadingSavingPhotoActivity.getSelectedImage());
+            shareIntent.putExtra(Intent.EXTRA_STREAM, LoadingSavingPhotoActivity.getExtraSelectedImage());
             activity.startActivity(Intent.createChooser(shareIntent, resources.getString(R.string.choosing_sender)));
         }
     }

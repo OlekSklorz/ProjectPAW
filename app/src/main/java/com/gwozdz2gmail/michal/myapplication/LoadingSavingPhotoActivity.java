@@ -20,15 +20,15 @@ import java.util.Date;
 
 public class LoadingSavingPhotoActivity extends AppCompatActivity {
 
-    private static ImageView image;
-    private static Uri selectedImage = null;
+    private static ImageView EXTRA_IMAGE;
+    private static Uri EXTRA_SELECTED_IMAGE = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_photo);
 
-        image = (ImageView) findViewById(R.id.imageView);
+        EXTRA_IMAGE = (ImageView) findViewById(R.id.imageView);
         startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images
                 .Media.EXTERNAL_CONTENT_URI), 1);
         ProgramManager.initSettingsButtons(this);
@@ -39,30 +39,30 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
             if(requestCode == 1){
-                selectedImage = data.getData();
+                EXTRA_SELECTED_IMAGE = data.getData();
                 String[] filePath = {MediaStore.Images.Media.DATA};
-                Cursor c = getContentResolver().query(selectedImage, filePath, null, null, null);
+                Cursor c = getContentResolver().query(EXTRA_SELECTED_IMAGE, filePath, null, null, null);
                 c.moveToFirst();
                 int columnIndex = c.getColumnIndex(filePath[0]);
                 String picturePath = c.getString(columnIndex);
                 c.close();
                 Bitmap thumbnail = BitmapFactory.decodeFile(picturePath);
-                image.setImageBitmap(thumbnail);
+                EXTRA_IMAGE.setImageBitmap(thumbnail);
             }
         }else{
             byte[] backupByteArray = getIntent().getByteArrayExtra("image");
             if(backupByteArray != null)
-                image.setImageBitmap(BitmapFactory.decodeByteArray(backupByteArray, 0, backupByteArray.length));
+                EXTRA_IMAGE.setImageBitmap(BitmapFactory.decodeByteArray(backupByteArray, 0, backupByteArray.length));
         }
     }
 
     @Override
     public void onRestart(){
         super.onRestart();
-        if(ProgramManager.isShouldDeleted()) { // deleted temporary file after shared
+        if(ProgramManager.isExtraShouldDeleted()) { // deleted temporary file after shared
             new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/temp.jpeg")
                     .delete();
-            ProgramManager.setShouldDeleted(false);
+            ProgramManager.setExtraShouldDeleted(false);
         }
     }
     /**
@@ -70,40 +70,40 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
      * @param view method's owner
      */
     public void load(View view){
-        ProgramManager.showChooser(this, ((BitmapDrawable)image.getDrawable()));
+        ProgramManager.showChooser(this, ((BitmapDrawable) EXTRA_IMAGE.getDrawable()));
     }
 
     /**
-     * Saves image to default folder named "Pictures" in Gallery.
+     * Saves EXTRA_IMAGE to default folder named "Pictures" in Gallery.
      * @param view method's owner
      */
     public void save(View view) {
-        MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable)image.getDrawable()).getBitmap(), createFileName(), "Created file");
+        MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable) EXTRA_IMAGE.getDrawable()).getBitmap(), createFileName(), "Created file");
         Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
     }
 
     /**
-     * Returns URI from selected image recently.
-     * @return URI of selected image
+     * Returns URI from selected EXTRA_IMAGE recently.
+     * @return URI of selected EXTRA_IMAGE
      */
-    public static Uri getSelectedImage(){
-        return selectedImage;
+    public static Uri getExtraSelectedImage(){
+        return EXTRA_SELECTED_IMAGE;
     }
 
     /**
-     * Sets URI for selected image recently.
-     * @param uri URI of selected image
+     * Sets URI for selected EXTRA_IMAGE recently.
+     * @param uri URI of selected EXTRA_IMAGE
      */
-    public static void setSelectedImage(Uri uri){
-        selectedImage = uri;
+    public static void setExtraSelectedImage(Uri uri){
+        EXTRA_SELECTED_IMAGE = uri;
     }
 
     /**
-     * Returns bitmap of actual selected image.
-     * @return bitmap of selected image
+     * Returns bitmap of actual selected EXTRA_IMAGE.
+     * @return bitmap of selected EXTRA_IMAGE
      */
-    public static Bitmap getImage(){
-        return ((BitmapDrawable)image.getDrawable()).getBitmap();
+    public static Bitmap getExtraImage(){
+        return ((BitmapDrawable) EXTRA_IMAGE.getDrawable()).getBitmap();
     }
 
     private  String createFileName(){
