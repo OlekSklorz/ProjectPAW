@@ -36,18 +36,16 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("JESTEM", "ON CREATE");
+        Log.d("JESTEM", "oncreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_photo);
         image = (ImageView) findViewById(R.id.imageView);
         startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images
                 .Media.EXTERNAL_CONTENT_URI), 1);
-        ProgramManager.initSettingsButtons(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("JESTEM", "ON ACTIVITY RESULT");
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == 1) {
@@ -69,20 +67,24 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
 
     @Override
     public void onRestart(){
-        Log.d("JESTEM", "ON RESTART");
         super.onRestart();
+        Log.d("JESTEM", "REST");
         if(ProgramManager.isShouldDeleted()) { // deleted temporary file after shared
             new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/temp.jpeg")
                     .delete();
             ProgramManager.setShouldDeleted(false);
         }
     }
+    @Override
+    public void onStart(){
+        super.onStart();
+        ProgramManager.initSettingsButtons(this); // init buttons when return to activity and when create this activity
+    }
     /**
      * Loading photo.
      * @param view method's owner
      */
     public void load(View view){
-        Log.d("JESTEM", "LOAD");
         ProgramManager.showChooser(this, ((BitmapDrawable)image.getDrawable()).getBitmap());
     }
 
@@ -91,7 +93,7 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
      * @param view method's owner
      */
     public void save(View view) {
-        Log.d("JESTEM", "SAVE");
+        Log.d("JESTEM", "ZAPISANY");
         MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable)image.getDrawable()).getBitmap(), createFileName(), "Created file");
         Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
     }
@@ -101,7 +103,6 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
      * @return URI of selected image
      */
     public static Uri getSelectedImage(){
-        Log.d("JESTEM", "getSelectedImage");
         return selectedImage;
     }
 
@@ -118,7 +119,6 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
      * @return bitmap of selected image
      */
     public static Bitmap getImage(){
-        Log.d("JESTEM", "getImage");
         return ((BitmapDrawable)image.getDrawable()).getBitmap();
     }
 
@@ -127,12 +127,10 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
     }
 
     private  String createFileName(){
-        Log.d("JESTEM", "CREATE FILE NAME");
         return "FILE" + (new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date())) + ".jpeg";
     }
 
     private static Bitmap adjustImageDimension(WindowManager manager, String picturePath){
-        Log.d("JESTEM", "adjust");
         DisplayMetrics displayMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(displayMetrics);
         int width = displayMetrics.widthPixels;
@@ -151,7 +149,6 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         return rotateBitmap(scaledBitmap, exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED));
     }
     private static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
-        Log.d("JESTEM", "rotate");
         Matrix matrix = new Matrix();
         switch (orientation) {
             case ExifInterface.ORIENTATION_NORMAL:
@@ -195,7 +192,6 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
     }
 
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        Log.d("JESTEM", "calculate");
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
