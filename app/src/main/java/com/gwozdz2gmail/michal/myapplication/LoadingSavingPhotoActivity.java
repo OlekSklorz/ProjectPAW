@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -32,14 +33,12 @@ import javax.microedition.khronos.opengles.GL10;
 public class LoadingSavingPhotoActivity extends AppCompatActivity {
 
     private static ImageView image;
-    private static Uri selectedImage = null;
-
+    private static Uri selectedImageURI = null;
+    Bitmap bit = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("JESTEM", "oncreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_photo);
-        image = (ImageView) findViewById(R.id.imageView);
         startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images
                 .Media.EXTERNAL_CONTENT_URI), 1);
     }
@@ -49,9 +48,9 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == 1) {
-                selectedImage = data.getData();
+                selectedImageURI = data.getData();
                 String[] filePath = {MediaStore.Images.Media.DATA};
-                Cursor c = getContentResolver().query(selectedImage, filePath, null, null, null);
+                Cursor c = getContentResolver().query(selectedImageURI, filePath, null, null, null);
                 c.moveToFirst();
                 int columnIndex = c.getColumnIndex(filePath[0]);
                 String picturePath = c.getString(columnIndex);
@@ -68,18 +67,20 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
     @Override
     public void onRestart(){
         super.onRestart();
-        Log.d("JESTEM", "REST");
         if(ProgramManager.isShouldDeleted()) { // deleted temporary file after shared
             new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/temp.jpeg")
                     .delete();
             ProgramManager.setShouldDeleted(false);
         }
     }
+
     @Override
     public void onStart(){
         super.onStart();
+        image = (ImageView) findViewById(R.id.imageView); // it must be here, to save and share proper image
         ProgramManager.initSettingsButtons(this); // init buttons when return to activity and when create this activity
     }
+
     /**
      * Loading photo.
      * @param view method's owner
@@ -93,7 +94,6 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
      * @param view method's owner
      */
     public void save(View view) {
-        Log.d("JESTEM", "ZAPISANY");
         MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable)image.getDrawable()).getBitmap(), createFileName(), "Created file");
         Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
     }
@@ -102,16 +102,16 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
      * Returns URI from selected image recently.
      * @return URI of selected image
      */
-    public static Uri getSelectedImage(){
-        return selectedImage;
+    public static Uri getSelectedImageURI(){
+        return selectedImageURI;
     }
 
     /**
      * Sets URI for selected image recently.
      * @param uri URI of selected image
      */
-    public static void setSelectedImage(Uri uri){
-        selectedImage = uri;
+    public static void setSelectedImageURI(Uri uri){
+        selectedImageURI = uri;
     }
 
     /**
@@ -148,6 +148,7 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         }
         return rotateBitmap(scaledBitmap, exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED));
     }
+
     private static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
         Matrix matrix = new Matrix();
         switch (orientation) {

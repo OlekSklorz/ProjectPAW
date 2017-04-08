@@ -20,7 +20,6 @@
         android:layout_gravity="right|top"
         android:src="@drawable/settings_icon"
         android:background="@null"
-        android:onClick="showPopup"
 
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"

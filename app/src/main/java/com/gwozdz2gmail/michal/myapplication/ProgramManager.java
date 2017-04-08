@@ -28,7 +28,6 @@ public class ProgramManager {
             creditsButton, bugButton, offButton, monoButton, negativeButton,
             whiteBeardButton, sepiaButton, blackBeardButton;
     private static boolean shouldDeleted = false;
-    private static boolean returnFromLoading = false;
     private static Bitmap lastImage;
     /**
      * Loading photo.
@@ -83,13 +82,6 @@ public class ProgramManager {
         shouldDeleted = deleted;
     }
 
-    public static boolean isReturnFromLoading(){
-        return returnFromLoading;
-    }
-
-    public static void setReturnFromLoading(boolean isReturn){
-        returnFromLoading = isReturn;
-    }
     private static void addActionToSetttingsButton(final Activity activity){
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,7 +205,7 @@ public class ProgramManager {
 
     private static void share(Activity activity){
         Resources resources = activity.getResources();
-        if(LoadingSavingPhotoActivity.getSelectedImage() != null) { // check if image is already saved
+        if(LoadingSavingPhotoActivity.getSelectedImageURI() != null) { // check if image is already saved
             File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/");
             if (!dir.exists()) dir.mkdirs();
             File file = new File(dir, "temp.jpeg");
@@ -230,7 +222,7 @@ public class ProgramManager {
             shouldDeleted = true;
         }else{
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, LoadingSavingPhotoActivity.getSelectedImage());
+            shareIntent.putExtra(Intent.EXTRA_STREAM, LoadingSavingPhotoActivity.getSelectedImageURI());
             activity.startActivity(Intent.createChooser(shareIntent, resources.getString(R.string.choosing_sender)));
         }
     }
