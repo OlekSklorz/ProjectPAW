@@ -1,10 +1,15 @@
 package com.gwozdz2gmail.michal.myapplication;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -13,10 +18,17 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.FaceDetector;
+import com.google.android.gms.vision.face.Landmark;
 
 import java.io.File;
 import java.io.IOException;
@@ -199,7 +211,9 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
             int columnIndex = c.getColumnIndex(filePath[0]);
             String picturePath = c.getString(columnIndex);
             c.close();
-            image.setImageBitmap(adjustImageDimension(getWindowManager(), picturePath));
+            Bitmap b = adjustImageDimension(getWindowManager(), picturePath);
+            //image.setImageBitmap(b);
+            detect(b);
         } else {
             Bitmap map = ProgramManager.getLastImage();
             if(map != null) {
@@ -210,5 +224,47 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
                 this.startActivity(intent);
             }
         }
+    }
+    public void detect(Bitmap map){
+        FaceDetector detector = new FaceDetector.Builder(this).setTrackingEnabled(false)
+                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+                .build();
+        Frame frame = new Frame.Builder().setBitmap(map).build();
+        SparseArray<Face> faces = detector.detect(frame);
+        //Canvas canvas = new Canvas();
+        Paint paint = new Paint();
+        paint.setColor(Color.BLUE);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5.0f);
+
+
+
+        Bitmap tempBitmap = Bitmap.createBitmap(map.getWidth(), map.getHeight(), Bitmap.Config.RGB_565);
+        Canvas tempCanvas = new Canvas(tempBitmap);
+
+//Draw the image bitmap into the cavas
+        tempCanvas.drawBitmap(map, 0, 0, null);
+        //tempCanvas.drawCircle(10, 10, 40, paint);
+//Draw everything else you want into the canvas, in this example a rectangle with rounded edges
+        //tempCanvas.drawRoundRect(new RectF(0,0,20,20), 2, 2, paint);
+
+//Attach the canvas to the ImageView
+       // image.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
+
+        //canvas.drawCircle(10, 10, 10, paint);
+        for (int i = 0; i < faces.size(); ++i) {
+            Log.d("JESTEM", "WPETLI");
+            Face face = faces.valueAt(i);
+            for (Landmark landmark : face.getLandmarks()) {
+                Log.d("JESTEM", "WDRUGIEJ");
+                int cx = (int) (landmark.getPosition().x * 1);
+                int cy = (int) (landmark.getPosition().y * 1);
+                tempCanvas.drawCircle(cx, cy, 10, paint);
+            }
+        }
+        image.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
+        if(!detector.isOperational()) Log.d("JESTEM", "NIEDOSTEPNY");
+        Log.d("JESTEM", "TUTAJ");
+        detector.release();
     }
 }

@@ -23,7 +23,7 @@ public class ProgramManager {
     private static int visible_filters = View.INVISIBLE;
     public static ImageButton settingsButton, filtersButton, shareButton, languagesButton,
             creditsButton, bugButton, offButton, monoButton, negativeButton,
-            whiteBeardButton, sepiaButton, blackBeardButton, backButton;
+            whiteBeardButton, sepiaButton, blackBeardButton, backButton, faceDetectorButton;
     private static boolean shouldDeleted = false;
     private static Bitmap lastImage;
     /**
@@ -77,6 +77,7 @@ public class ProgramManager {
         whiteBeardButton = (ImageButton) activity.findViewById(R.id.white_beard_filter);
         sepiaButton = (ImageButton) activity.findViewById(R.id.sepia_filter);
         blackBeardButton = (ImageButton) activity.findViewById(R.id.black_beard_filter);
+        faceDetectorButton = (ImageButton) activity.findViewById(R.id.face_detector_filter);
 
         initSettingsListeners(activity);
         initFiltersListeners(activity);
@@ -123,6 +124,7 @@ public class ProgramManager {
                     whiteBeardButton.setVisibility(filtersButton.getVisibility());
                     sepiaButton.setVisibility(filtersButton.getVisibility());
                     blackBeardButton.setVisibility(filtersButton.getVisibility());
+                    faceDetectorButton.setVisibility(filtersButton.getVisibility());
                 }
             }
         });
@@ -176,6 +178,7 @@ public class ProgramManager {
         whiteBeardButton.setVisibility(visible_filters);
         sepiaButton.setVisibility(visible_filters);
         blackBeardButton.setVisibility(visible_filters);
+        faceDetectorButton.setVisibility(visible_filters);
     }
 
     private static void showAbout(Activity activity){

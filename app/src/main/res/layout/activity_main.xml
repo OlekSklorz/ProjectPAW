@@ -194,4 +194,17 @@
         android:layout_alignParentLeft="true"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"/>
+
+    <ImageButton
+        android:id="@+id/face_detector_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/sepia_icon"
+        android:background="@null"
+        android:visibility="invisible"
+
+        android:layout_below="@id/black_beard_filter"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"/>
 </RelativeLayout>
