@@ -56,7 +56,7 @@
         android:id="@+id/reverseCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/create_photo_icon"
+        android:src="@drawable/switch_camera_icon"
         android:background="@null"
 
         android:layout_alignParentBottom="true"

@@ -31,8 +31,9 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_photo);
-        startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images
-                .Media.EXTERNAL_CONTENT_URI), 1);
+
+            startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images
+                    .Media.EXTERNAL_CONTENT_URI), 1);
     }
 
     @Override
