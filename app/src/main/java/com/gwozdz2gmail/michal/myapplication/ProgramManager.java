@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.io.File;
@@ -71,15 +72,15 @@ public class ProgramManager {
         creditsButton = (ImageButton) activity.findViewById(R.id.credits);
         bugButton = (ImageButton) activity.findViewById(R.id.bugs);
 
-        offButton = (ImageButton) activity.findViewById(R.id.off_filter);
-        monoButton = (ImageButton) activity.findViewById(R.id.mono_filter);
-        negativeButton = (ImageButton) activity.findViewById(R.id.negative_filter);
-        whiteBeardButton = (ImageButton) activity.findViewById(R.id.white_beard_filter);
-        sepiaButton = (ImageButton) activity.findViewById(R.id.sepia_filter);
-        blackBeardButton = (ImageButton) activity.findViewById(R.id.black_beard_filter);
+        offButton = (ImageButton) activity.findViewById(R.id.filter_0);
+        monoButton = (ImageButton) activity.findViewById(R.id.filter_1);
+        negativeButton = (ImageButton) activity.findViewById(R.id.filter_2);
+        whiteBeardButton = (ImageButton) activity.findViewById(R.id.filter_3);
+        sepiaButton = (ImageButton) activity.findViewById(R.id.filter_4);
+        blackBeardButton = (ImageButton) activity.findViewById(R.id.filter_5);
 
         initSettingsListeners(activity);
-        initFiltersListeners(activity);
+        initSettingsActivity(activity);
     }
 
     /**
@@ -109,26 +110,27 @@ public class ProgramManager {
                 }
 
                 filtersButton.setVisibility(visible);
-                if(!(activity instanceof MainActivity))
+                if(!(activity instanceof MainActivity)) {
                     shareButton.setVisibility(visible);
+                }
                 languagesButton.setVisibility(visible);
                 creditsButton.setVisibility(visible);
                 bugButton.setVisibility(visible);
 
                 if(filtersButton.getVisibility() == View.INVISIBLE) {
                     visible_filters = View.INVISIBLE;
-                    offButton.setVisibility(filtersButton.getVisibility());
-                    monoButton.setVisibility(filtersButton.getVisibility());
-                    negativeButton.setVisibility(filtersButton.getVisibility());
-                    whiteBeardButton.setVisibility(filtersButton.getVisibility());
-                    sepiaButton.setVisibility(filtersButton.getVisibility());
-                    blackBeardButton.setVisibility(filtersButton.getVisibility());
+                    offButton.setVisibility(View.INVISIBLE);
+                    monoButton.setVisibility(View.INVISIBLE);
+                    negativeButton.setVisibility(View.INVISIBLE);
+                    whiteBeardButton.setVisibility(View.INVISIBLE);
+                    sepiaButton.setVisibility(View.INVISIBLE);
+                    blackBeardButton.setVisibility(View.INVISIBLE);
                 }
             }
         });
     }
 
-    private static void initFiltersListeners(final Activity activity){
+    private static void initSettingsActivity(final Activity activity){
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

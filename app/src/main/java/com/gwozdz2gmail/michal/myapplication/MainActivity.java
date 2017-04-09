@@ -1,10 +1,8 @@
 package com.gwozdz2gmail.michal.myapplication;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -65,6 +63,40 @@ public class MainActivity extends Activity{
         initFiltersListener();
     }
 
+    private void initFiltersListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch(v.getId()) {
+                    case(R.id.filter_0) :
+                        camera2API.setFilter(0);
+                        break;
+                    case(R.id.filter_1) :
+                        camera2API.setFilter(4);
+                        break;
+                    case(R.id.filter_2) :
+                        camera2API.setFilter(1);
+                        break;
+                    case(R.id.filter_3) :
+                        camera2API.setFilter(6);
+                        break;
+                    case(R.id.filter_4) :
+                        camera2API.setFilter(2);
+                        break;
+                    case(R.id.filter_5) :
+                        camera2API.setFilter(7);
+                }
+            }
+        };
+
+        ProgramManager.offButton.setOnClickListener(listener);
+        ProgramManager.monoButton.setOnClickListener(listener);
+        ProgramManager.negativeButton.setOnClickListener(listener);
+        ProgramManager.whiteBeardButton.setOnClickListener(listener);
+        ProgramManager.sepiaButton.setOnClickListener(listener);
+        ProgramManager.blackBeardButton.setOnClickListener(listener);
+    }
+
     private void initTakePictureButton() {
         takePictureButton = (ImageButton) findViewById(R.id.btn_take_picture);
         initTakePictureListener();
@@ -97,40 +129,6 @@ public class MainActivity extends Activity{
                 camera2API.openCamera(index);
             }
         });
-    }
-
-    private void initFiltersListener() {
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch(v.getId()) {
-                    case(R.id.off_filter) :
-                        camera2API.setFilter(0);
-                        break;
-                    case(R.id.mono_filter) :
-                        camera2API.setFilter(1);
-                        break;
-                    case(R.id.negative_filter) :
-                        camera2API.setFilter(2);
-                        break;
-                    case(R.id.white_beard_filter) :
-                        camera2API.setFilter(6);
-                        break;
-                    case(R.id.sepia_filter) :
-                        camera2API.setFilter(4);
-                        break;
-                    case(R.id.black_beard_filter) :
-                        camera2API.setFilter(7);
-                }
-            }
-        };
-
-        ProgramManager.offButton.setOnClickListener(listener);
-        ProgramManager.monoButton.setOnClickListener(listener);
-        ProgramManager.negativeButton.setOnClickListener(listener);
-        ProgramManager.whiteBeardButton.setOnClickListener(listener);
-        ProgramManager.sepiaButton.setOnClickListener(listener);
-        ProgramManager.blackBeardButton.setOnClickListener(listener);
     }
 
     /**

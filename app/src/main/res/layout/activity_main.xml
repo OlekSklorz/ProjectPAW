@@ -118,7 +118,7 @@
         android:layout_marginTop="16dp"/>
     
     <ImageButton
-        android:id="@+id/off_filter"
+        android:id="@+id/filter_0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/off_icon"
@@ -131,66 +131,66 @@
         android:layout_marginLeft="16dp"/>
 
     <ImageButton
-        android:id="@+id/mono_filter"
+        android:id="@+id/filter_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/mono_icon"
         android:background="@null"
         android:visibility="invisible"
 
-        android:layout_below="@id/off_filter"
+        android:layout_below="@id/filter_0"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"/>
 
     <ImageButton
-        android:id="@+id/negative_filter"
+        android:id="@+id/filter_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/negative_icon"
         android:background="@null"
         android:visibility="invisible"
 
-        android:layout_below="@id/mono_filter"
+        android:layout_below="@id/filter_1"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"/>
 
     <ImageButton
-        android:id="@+id/white_beard_filter"
+        android:id="@+id/filter_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/solarize_icon"
         android:background="@null"
         android:visibility="invisible"
 
-        android:layout_below="@id/negative_filter"
+        android:layout_below="@id/filter_2"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"/>
 
     <ImageButton
-        android:id="@+id/sepia_filter"
+        android:id="@+id/filter_4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/sepia_icon"
         android:background="@null"
         android:visibility="invisible"
 
-        android:layout_below="@id/white_beard_filter"
+        android:layout_below="@id/filter_3"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"/>
 
     <ImageButton
-        android:id="@+id/black_beard_filter"
+        android:id="@+id/filter_5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/sepia_icon"
         android:background="@null"
         android:visibility="invisible"
 
-        android:layout_below="@id/sepia_filter"
+        android:layout_below="@id/filter_4"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"/>

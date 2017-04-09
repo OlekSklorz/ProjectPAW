@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -16,6 +20,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.io.File;
@@ -42,6 +47,7 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         initImageView();
         initSettingsButtons();
         initBackButton();
+        initFilters();
     }
 
     @Override
@@ -68,6 +74,89 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
 
     public void loadFileAction(View view){
         ProgramManager.showChooser(this, ((BitmapDrawable)image.getDrawable()).getBitmap());
+    }
+
+    private void initFilters() {
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ColorMatrixColorFilter cm;
+                switch (v.getId()) {
+                    case (R.id.filter_0):
+                        image.setColorFilter(null);
+                        break;
+                    case (R.id.filter_1):
+                        cm = new ColorMatrixColorFilter(getSaturation());
+                        image.setColorFilter(cm);
+                        break;
+                    case (R.id.filter_2):
+                        cm = new ColorMatrixColorFilter(getBlackWhite());
+                        image.setColorFilter(cm);
+                        break;
+                    case (R.id.filter_3):
+                        cm = new ColorMatrixColorFilter(getBinary());
+                        image.setColorFilter(cm);
+                        break;
+                    case (R.id.filter_4):
+                        cm = new ColorMatrixColorFilter(getInvert());
+                        image.setColorFilter(cm);
+                        break;
+                    case (R.id.filter_5):
+
+                }
+            }
+        };
+
+        ProgramManager.offButton.setOnClickListener(listener);
+        ProgramManager.monoButton.setOnClickListener(listener);
+        ProgramManager.negativeButton.setOnClickListener(listener);
+        ProgramManager.whiteBeardButton.setOnClickListener(listener);
+        ProgramManager.sepiaButton.setOnClickListener(listener);
+        ProgramManager.blackBeardButton.setOnClickListener(listener);
+    }
+
+
+    private ColorMatrix getSaturation() {
+        ColorMatrix effect = new ColorMatrix();
+        effect.setSaturation(0);
+
+        return effect;
+    }
+
+    private ColorMatrix getBlackWhite() {
+        ColorMatrix effect0 = getSaturation();
+        ColorMatrix effect1 = new ColorMatrix();
+
+        effect1.setScale(1f, .95f, .82f, 1.0f);
+        effect0.setConcat(effect1, effect0);
+
+        return effect0;
+    }
+
+    private ColorMatrix getBinary() {
+        ColorMatrix colorMatrix = new ColorMatrix();
+        colorMatrix.setSaturation(0);
+
+        float m = 255f;
+        float t = -255*128f;
+        ColorMatrix threshold = new ColorMatrix(new float[] {
+                m, 0, 0, 1, t,
+                0, m, 0, 1, t,
+                0, 0, m, 1, t,
+                0, 0, 0, 1, 0
+        });
+        colorMatrix.postConcat(threshold);
+
+        return colorMatrix;
+    }
+
+    private ColorMatrix getInvert() {
+        return new ColorMatrix(new float[] {
+            -1,  0,  0,  0, 255,
+            0, -1,  0,  0, 255,
+            0,  0, -1,  0, 255,
+            0,  0,  0,  1,   0
+        });
     }
 
     /**
@@ -195,6 +284,7 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
             selectedImageURI = data.getData();
             String[] filePath = {MediaStore.Images.Media.DATA};
             Cursor c = getContentResolver().query(selectedImageURI, filePath, null, null, null);
+            assert c != null;
             c.moveToFirst();
             int columnIndex = c.getColumnIndex(filePath[0]);
             String picturePath = c.getString(columnIndex);
