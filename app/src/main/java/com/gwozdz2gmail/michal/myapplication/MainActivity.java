@@ -1,15 +1,20 @@
 package com.gwozdz2gmail.michal.myapplication;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import java.util.TimerTask;
 
 public class MainActivity extends Activity{
     private static final String TAG = "AndroidCameraApi";
@@ -171,6 +176,5 @@ public class MainActivity extends Activity{
             }
         }
     }
-
 }
 

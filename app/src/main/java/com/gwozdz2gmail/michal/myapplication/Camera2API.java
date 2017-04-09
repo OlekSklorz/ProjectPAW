@@ -25,17 +25,12 @@ import android.os.HandlerThread;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,7 +43,6 @@ import java.util.List;
 
 public class Camera2API {
     int mode = 0;
-    private static final String TAG = "AndroidCameraApi";
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -63,7 +57,6 @@ public class Camera2API {
     private CaptureRequest.Builder captureRequestBuilder;
     private Size imageDimension;
     private ImageReader imageReader;
-    private File file;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
@@ -78,7 +71,6 @@ public class Camera2API {
         @Override
         public void onOpened(@NonNull CameraDevice camera) {
             //This is called when the camera is open
-            Log.e(TAG, "onOpened");
             cameraDevice = camera;
             createCameraPreview();
         }
@@ -98,7 +90,6 @@ public class Camera2API {
         @Override
         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
-            Toast.makeText(context, "Saved:" + file, Toast.LENGTH_SHORT).show();
             createCameraPreview();
         }
     };
@@ -122,21 +113,17 @@ public class Camera2API {
 
     void takePicture() {
         if (null == cameraDevice) {
-            Log.e(TAG, "cameraDevice is null");
             return;
         }
         CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
         try {
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraDevice.getId());
-            Size[] jpegSizes;
-            jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
-            int width = 1920;
-            int height = 1080;
-            if (jpegSizes != null && 0 < jpegSizes.length) {
-                width = jpegSizes[0].getWidth();
-                height = jpegSizes[0].getHeight();
-            }
-            ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
+            Size[] jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.YUV_420_888);
+
+            int width = jpegSizes[0].getWidth();
+            int height = jpegSizes[0].getHeight();
+
+            ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.YUV_420_888, 2);
             List<Surface> outputSurfaces = new ArrayList<>(2);
             outputSurfaces.add(reader.getSurface());
             outputSurfaces.add(new Surface(MainActivity.textureView.getSurfaceTexture()));
@@ -144,22 +131,14 @@ public class Camera2API {
             captureBuilder.addTarget(reader.getSurface());
 
             //saving with filters
-            if(mode != 0) {
-                captureBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, mode);
-            } else {
-                captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-            }
+            captureBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, mode);
 
             // Orientation
             int rotation = ((Activity)context).getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
 
-            Calendar c = Calendar.getInstance();
-            String sb = File.separator + c.get(Calendar.HOUR) + c.get(Calendar.MINUTE) + c.get(Calendar.SECOND) +
-                    c.get(Calendar.MILLISECOND) + ".jpg";
-            sb = (Environment.getExternalStorageDirectory()+sb);
-
-            final File file = new File(sb);
+            //Destination
+            final File file = new File(Environment.getExternalStorageDirectory() + File.separator + Calendar.getInstance().getTime() + ".jpg");
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
@@ -178,20 +157,9 @@ public class Camera2API {
                         }
                     }
                 }
-
-                private void save(byte[] bytes) throws IOException {
-                    OutputStream output = null;
-                    try {
-                        output = new FileOutputStream(file);
-                        output.write(bytes);
-                    } finally {
-                        if (null != output) {
-                            output.close();
-                        }
-                    }
-                }
             };
             reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
+
             final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
                 @Override
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
@@ -200,6 +168,7 @@ public class Camera2API {
                     createCameraPreview();
                 }
             };
+
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession session) {
@@ -226,6 +195,10 @@ public class Camera2API {
             Surface surface = new Surface(texture);
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
+
+            captureRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, true);
+            captureRequestBuilder.set(CaptureRequest.CONTROL_AWB_LOCK, true);
+
             cameraDevice.createCaptureSession(Collections.singletonList(surface), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
@@ -252,7 +225,6 @@ public class Camera2API {
 
     private void updatePreview() {
         if (null == cameraDevice) {
-            Log.e(TAG, "updatePreview error, return");
         }
         captureRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, mode);
 
@@ -279,7 +251,6 @@ public class Camera2API {
 
     void openCamera(int index) {
         CameraManager manager = createCameraManager();
-        Log.e(TAG, "is camera open");
         try {
             cameraId = manager.getCameraIdList()[index];
 
@@ -296,7 +267,6 @@ public class Camera2API {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
-        Log.e(TAG, "openCamera X");
     }
     //↑ ↑ ↑ openCamera()
     /**
