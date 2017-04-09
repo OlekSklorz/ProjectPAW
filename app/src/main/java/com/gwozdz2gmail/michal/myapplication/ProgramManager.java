@@ -6,15 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -26,22 +23,41 @@ public class ProgramManager {
     private static int visible_filters = View.INVISIBLE;
     public static ImageButton settingsButton, filtersButton, shareButton, languagesButton,
             creditsButton, bugButton, offButton, monoButton, negativeButton,
-            whiteBeardButton, sepiaButton, blackBeardButton;
+            whiteBeardButton, sepiaButton, blackBeardButton, backButton;
     private static boolean shouldDeleted = false;
     private static Bitmap lastImage;
     /**
      * Loading photo.
      * @param activity chooser's owner
-     * @param image bitmap which shoulb be saved as a backup. It may be null if we don't want to save anything.
+     * @param image bitmap which shoulb be saved as a backup. It may be null if we don't want to saveFileAction anything.
      */
     public static void showChooser(final Activity activity, Bitmap image){
-        if(image != null) lastImage = image;
+        if(image != null) {
+            lastImage = image;
+        }
         activity.startActivity(new Intent(activity, LoadingSavingPhotoActivity.class));
     }
 
     public static Bitmap getLastImage(){
         return lastImage;
     }
+
+    public static void initBackButton(Activity activity) {
+        backButton = (ImageButton) activity.findViewById(R.id.returnCameraButton);
+        initBackListener(activity);
+    }
+
+    public static void initBackListener(final Activity activity) {
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
+            }
+        });
+    }
+
     /**
      * Creates buttons for settings menu.
      * @param activity activity that calls method
@@ -62,8 +78,8 @@ public class ProgramManager {
         sepiaButton = (ImageButton) activity.findViewById(R.id.sepia_filter);
         blackBeardButton = (ImageButton) activity.findViewById(R.id.black_beard_filter);
 
-        addActionToSetttingsButton(activity);
-        initSettingsButtonListeners(activity);
+        initSettingsListeners(activity);
+        initFiltersListeners(activity);
     }
 
     /**
@@ -82,7 +98,7 @@ public class ProgramManager {
         shouldDeleted = deleted;
     }
 
-    private static void addActionToSetttingsButton(final Activity activity){
+    private static void initSettingsListeners(final Activity activity){
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,7 +128,7 @@ public class ProgramManager {
         });
     }
 
-    private static void initSettingsButtonListeners(final Activity activity){
+    private static void initFiltersListeners(final Activity activity){
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

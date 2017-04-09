@@ -162,7 +162,7 @@ public class Camera2API {
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
-                        //save(bytes);
+                        //saveFileAction(bytes);
                         Bitmap bit = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
                         MediaStore.Images.Media.insertImage(context.getContentResolver(), bit, "Asd", "asd");
                     } finally {
@@ -270,12 +270,12 @@ public class Camera2API {
         }
     }
 
-    void openCamera() {
+    void openCamera(int index) {
         CameraManager manager = createCameraManager();
         Log.e(TAG, "is camera open");
         try {
-            cameraId = getRearCameraID(manager);
-//            cameraId = getFrontCameraID(manager);
+            cameraId = manager.getCameraIdList()[index];
+
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;

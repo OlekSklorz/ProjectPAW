@@ -31,14 +31,14 @@
         android:id="@+id/load_file"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="load"
         android:src="@drawable/load_file_icon"
+        android:onClick="loadFileAction"
         android:background="@null"
 
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"/>
 
     <ImageButton
         android:id="@+id/btn_take_picture"
@@ -49,8 +49,20 @@
 
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"/>
+
+    <ImageButton
+        android:id="@+id/reverseCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/create_photo_icon"
+        android:background="@null"
+
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"/>
 
     <!--SETTINGS-->
     <ImageButton

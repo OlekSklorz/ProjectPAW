@@ -5,13 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoadingSavingPhotoActivity">
+    tools:context=".LoadingSavingPhotoActivity"
+    android:orientation="vertical"
+    android:theme="@style/AppTheme" >
+
 
     <!-- It must be first to it doesn't hide buttons -->
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+
+        android:layout_above="@+id/savingButton"/>
 
     <ImageButton
         android:id="@+id/settings"
@@ -31,42 +36,41 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|left"
-        android:onClick="load"
+        android:onClick="loadFileAction"
         android:src="@drawable/load_file_icon"
         android:background="@null"
 
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"/>
 
     <ImageButton
         android:id="@+id/returnCameraButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:onClick="returnToCamera"
         android:src="@drawable/create_photo_icon"
         android:background="@null"
 
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"/>
 
     <ImageButton
         android:id="@+id/savingButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="save"
+        android:onClick="saveFileAction"
         android:src="@drawable/save_icon"
         android:background="@null"
 
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"/>
 
     <ImageButton
         android:id="@+id/filters"

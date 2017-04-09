@@ -4,37 +4,29 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.opengl.GLES10;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
-import javax.microedition.khronos.opengles.GL10;
-
 public class LoadingSavingPhotoActivity extends AppCompatActivity {
-
     private static ImageView image;
     private static Uri selectedImageURI = null;
-    Bitmap bit = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,24 +36,11 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == 1) {
-                selectedImageURI = data.getData();
-                String[] filePath = {MediaStore.Images.Media.DATA};
-                Cursor c = getContentResolver().query(selectedImageURI, filePath, null, null, null);
-                c.moveToFirst();
-                int columnIndex = c.getColumnIndex(filePath[0]);
-                String picturePath = c.getString(columnIndex);
-                c.close();
-                image.setImageBitmap(adjustImageDimension(getWindowManager(), picturePath));
-            }
-        } else {
-            Bitmap map = ProgramManager.getLastImage();
-            if(map != null)
-                image.setImageBitmap(map);
-        }
+    public void onStart(){
+        super.onStart();
+        initImageView();
+        initSettingsButtons();
+        initBackButton();
     }
 
     @Override
@@ -74,18 +53,19 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onStart(){
-        super.onStart();
-        image = (ImageView) findViewById(R.id.imageView); // it must be here, to save and share proper image
+    private void initImageView() {
+        image = (ImageView) findViewById(R.id.imageView); // it must be here, to saveFileAction and share proper image
+    }
+
+    private void initSettingsButtons() {
         ProgramManager.initSettingsButtons(this); // init buttons when return to activity and when create this activity
     }
 
-    /**
-     * Loading photo.
-     * @param view method's owner
-     */
-    public void load(View view){
+    private void initBackButton() {
+        ProgramManager.initBackButton(this);
+    }
+
+    public void loadFileAction(View view){
         ProgramManager.showChooser(this, ((BitmapDrawable)image.getDrawable()).getBitmap());
     }
 
@@ -93,7 +73,7 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
      * Saves image to default folder named "Pictures" in Gallery.
      * @param view method's owner
      */
-    public void save(View view) {
+    public void saveFileAction(View view) {
         MediaStore.Images.Media.insertImage(getContentResolver(), ((BitmapDrawable)image.getDrawable()).getBitmap(), createFileName(), "Created file");
         Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
     }
@@ -120,10 +100,6 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
      */
     public static Bitmap getImage(){
         return ((BitmapDrawable)image.getDrawable()).getBitmap();
-    }
-
-    public void returnToCamera(View view){
-        startActivity(new Intent(this, MainActivity.class));
     }
 
     private  String createFileName(){
@@ -208,5 +184,27 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
             }
         }
         return inSampleSize;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
+                selectedImageURI = data.getData();
+                String[] filePath = {MediaStore.Images.Media.DATA};
+                Cursor c = getContentResolver().query(selectedImageURI, filePath, null, null, null);
+                c.moveToFirst();
+                int columnIndex = c.getColumnIndex(filePath[0]);
+                String picturePath = c.getString(columnIndex);
+                c.close();
+                image.setImageBitmap(adjustImageDimension(getWindowManager(), picturePath));
+            }
+        } else {
+            Bitmap map = ProgramManager.getLastImage();
+            if(map != null)
+                image.setImageBitmap(map);
+        }
     }
 }

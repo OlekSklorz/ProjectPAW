@@ -1,12 +1,10 @@
 package com.gwozdz2gmail.michal.myapplication;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
@@ -15,47 +13,110 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity{
     private static final String TAG = "AndroidCameraApi";
-    private ImageButton takePictureButton;
+    private ImageButton takePictureButton, reverseCameraButton;
     protected static TextureView textureView;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private Camera2API camera2API;
+    private int index = 0;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d("JESTEM", "HELLOW");
+
         camera2API = new Camera2API(MainActivity.this);
         initViewElements();
-        initListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        camera2API.startBackgroundThread();
+        if (textureView.isAvailable()) {
+            camera2API.openCamera(0);
+        } else {
+            textureView.setSurfaceTextureListener(textureListener);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        Log.e(TAG, "onPause");
+        camera2API.closeCamera();
+        camera2API.stopBackgroundThread();
+        super.onPause();
     }
 
     private void initViewElements() {
+        initTextureView();
+        initSettingsButtons();
+        initTakePictureButton();
+        initReverseCameraButton();
+    }
+
+    private void initTextureView() {
         textureView = (TextureView) findViewById(R.id.texture);
         textureView.setSurfaceTextureListener(textureListener);
+    }
 
-        takePictureButton = (ImageButton) findViewById(R.id.btn_take_picture);
+    private void initSettingsButtons() {
         ProgramManager.initSettingsButtons(this);
+        initFiltersListener();
+    }
 
+    private void initTakePictureButton() {
+        takePictureButton = (ImageButton) findViewById(R.id.btn_take_picture);
+        initTakePictureListener();
+    }
+
+    private void initTakePictureListener() {
+        takePictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                camera2API.takePicture();
+            }
+        });
+    }
+
+    private void initReverseCameraButton() {
+        reverseCameraButton = (ImageButton) findViewById(R.id.reverseCamera);
+        initReverseCameraListener();
+    }
+
+    private void initReverseCameraListener() {
+        reverseCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                camera2API.closeCamera();
+                if(index == 0) {
+                    index = 1;
+                } else if(index == 1) {
+                    index = 0;
+                }
+                camera2API.openCamera(index);
+            }
+        });
+    }
+
+    private void initFiltersListener() {
         View.OnClickListener listener = new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 switch(v.getId()) {
                     case(R.id.off_filter) :
                         camera2API.setFilter(0);
-                    break;
+                        break;
                     case(R.id.mono_filter) :
                         camera2API.setFilter(1);
-                    break;
+                        break;
                     case(R.id.negative_filter) :
                         camera2API.setFilter(2);
-                    break;
+                        break;
                     case(R.id.white_beard_filter) :
                         camera2API.setFilter(6);
-                    break;
+                        break;
                     case(R.id.sepia_filter) :
                         camera2API.setFilter(4);
-                    break;
+                        break;
                     case(R.id.black_beard_filter) :
                         camera2API.setFilter(7);
                 }
@@ -70,20 +131,11 @@ public class MainActivity extends Activity{
         ProgramManager.blackBeardButton.setOnClickListener(listener);
     }
 
-    private void initListeners() {
-        takePictureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                camera2API.takePicture();
-            }
-        });
-    }
-
     /**
      * Loading photo.
      * @param view method's owner
      */
-    public void load(View view){
+    public void loadFileAction(View view){
         ProgramManager.showChooser(this, null);
     }
 
@@ -91,7 +143,7 @@ public class MainActivity extends Activity{
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             //open your camera here
-            camera2API.openCamera();
+            camera2API.openCamera(0);
         }
 
         @Override
@@ -108,27 +160,6 @@ public class MainActivity extends Activity{
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         }
     };
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.e(TAG, "onResume");
-        camera2API.startBackgroundThread();
-        if (textureView.isAvailable()) {
-            camera2API.openCamera();
-        } else {
-            textureView.setSurfaceTextureListener(textureListener);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        Log.e(TAG, "onPause");
-        camera2API.closeCamera();
-        camera2API.stopBackgroundThread();
-        super.onPause();
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
