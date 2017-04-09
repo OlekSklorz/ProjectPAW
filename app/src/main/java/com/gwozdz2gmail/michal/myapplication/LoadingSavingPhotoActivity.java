@@ -190,21 +190,24 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == 1) {
-                selectedImageURI = data.getData();
-                String[] filePath = {MediaStore.Images.Media.DATA};
-                Cursor c = getContentResolver().query(selectedImageURI, filePath, null, null, null);
-                c.moveToFirst();
-                int columnIndex = c.getColumnIndex(filePath[0]);
-                String picturePath = c.getString(columnIndex);
-                c.close();
-                image.setImageBitmap(adjustImageDimension(getWindowManager(), picturePath));
-            }
+        if (resultCode == RESULT_OK && requestCode == 1) {
+            selectedImageURI = data.getData();
+            String[] filePath = {MediaStore.Images.Media.DATA};
+            Cursor c = getContentResolver().query(selectedImageURI, filePath, null, null, null);
+            c.moveToFirst();
+            int columnIndex = c.getColumnIndex(filePath[0]);
+            String picturePath = c.getString(columnIndex);
+            c.close();
+            image.setImageBitmap(adjustImageDimension(getWindowManager(), picturePath));
         } else {
             Bitmap map = ProgramManager.getLastImage();
-            if(map != null)
+            if(map != null) {
                 image.setImageBitmap(map);
+            } else {
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                this.startActivity(intent);
+            }
         }
     }
 }

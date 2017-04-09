@@ -131,8 +131,6 @@ public class Camera2API {
             jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
             int width = 1920;
             int height = 1080;
-//            int width = 640;
-//            int height = 480;
             if (jpegSizes != null && 0 < jpegSizes.length) {
                 width = jpegSizes[0].getWidth();
                 height = jpegSizes[0].getHeight();
@@ -143,7 +141,14 @@ public class Camera2API {
             outputSurfaces.add(new Surface(MainActivity.textureView.getSurfaceTexture()));
             final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(reader.getSurface());
-            captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+
+            //saving with filters
+            if(mode != 0) {
+                captureBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, mode);
+            } else {
+                captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+            }
+
             // Orientation
             int rotation = ((Activity)context).getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
@@ -297,24 +302,6 @@ public class Camera2API {
      */
     private CameraManager createCameraManager() {
         return (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
-    }
-    //↑ ↑ ↑ openCamera()
-    /**
-     * @param manager id CameraManager object
-     * @return Rear Camera ID String
-     * @throws CameraAccessException
-     */
-    private String getRearCameraID(CameraManager manager) throws CameraAccessException {
-        return manager.getCameraIdList()[0];
-    }
-    //↑ ↑ ↑ openCamera()
-    /**
-     * @param manager id CameraManager object
-     * @return Front Camera ID String
-     * @throws CameraAccessException
-     */
-    private String getFrontCameraID(CameraManager manager) throws CameraAccessException {
-        return manager.getCameraIdList()[1];
     }
 
     /**
