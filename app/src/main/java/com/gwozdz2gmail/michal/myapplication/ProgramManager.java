@@ -6,11 +6,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.FaceDetector;
+import com.google.android.gms.vision.face.Landmark;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -97,6 +108,38 @@ public class ProgramManager {
      */
     public static void setShouldDeleted(boolean deleted){
         shouldDeleted = deleted;
+    }
+
+    public static BitmapDrawable detectFace(Activity activity, Bitmap map){
+        /* ATTENTION!!: setTracking should be set on false, when we have single photo, because it
+         gives more accurate result. But when we have consecutive images for example live video,
+         it should be set on true, because it gives more accurate and faster result.*/
+        FaceDetector detector = new FaceDetector.Builder(activity).setTrackingEnabled(false)
+                .setLandmarkType(FaceDetector.ALL_LANDMARKS).build();
+        if(!detector.isOperational()){
+            Log.e("Missing library", "Native library can't be downloaded");
+            return null;
+        }else{
+            SparseArray<Face> faces = detector.detect(new Frame.Builder().setBitmap(map).build());
+            Paint paint = new Paint();
+            paint.setColor(Color.BLUE);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(5.0f);
+            Bitmap tempBitmap = Bitmap.createBitmap(map.getWidth(), map.getHeight(), Bitmap.Config.RGB_565);
+            Canvas tempCanvas = new Canvas(tempBitmap);
+            tempCanvas.drawBitmap(map, 0, 0, null);
+            for (int i = 0; i < faces.size(); ++i) {
+                Face face = faces.valueAt(i);
+                for (Landmark landmark : face.getLandmarks()) {
+                    int cx = (int) (landmark.getPosition().x * 1);
+                    int cy = (int) (landmark.getPosition().y * 1);
+                    tempCanvas.drawCircle(cx, cy, 10, paint);
+                }
+            }
+            // detector uses native resources, so it is necessary to release the detector
+            detector.release();
+            return new BitmapDrawable(activity.getResources(), tempBitmap);
+        }
     }
 
     private static void initSettingsListeners(final Activity activity){

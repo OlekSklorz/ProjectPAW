@@ -223,6 +223,7 @@
         android:src="@drawable/sepia_icon"
         android:background="@null"
         android:visibility="invisible"
+        android:onClick="detectFace"
 
         android:layout_below="@id/black_beard_filter"
         android:layout_alignParentLeft="true"

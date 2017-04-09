@@ -211,9 +211,7 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
             int columnIndex = c.getColumnIndex(filePath[0]);
             String picturePath = c.getString(columnIndex);
             c.close();
-            Bitmap b = adjustImageDimension(getWindowManager(), picturePath);
-            //image.setImageBitmap(b);
-            detect(b);
+            image.setImageBitmap(adjustImageDimension(getWindowManager(), picturePath));
         } else {
             Bitmap map = ProgramManager.getLastImage();
             if(map != null) {
@@ -225,46 +223,8 @@ public class LoadingSavingPhotoActivity extends AppCompatActivity {
             }
         }
     }
-    public void detect(Bitmap map){
-        FaceDetector detector = new FaceDetector.Builder(this).setTrackingEnabled(false)
-                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                .build();
-        Frame frame = new Frame.Builder().setBitmap(map).build();
-        SparseArray<Face> faces = detector.detect(frame);
-        //Canvas canvas = new Canvas();
-        Paint paint = new Paint();
-        paint.setColor(Color.BLUE);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(5.0f);
-
-
-
-        Bitmap tempBitmap = Bitmap.createBitmap(map.getWidth(), map.getHeight(), Bitmap.Config.RGB_565);
-        Canvas tempCanvas = new Canvas(tempBitmap);
-
-//Draw the image bitmap into the cavas
-        tempCanvas.drawBitmap(map, 0, 0, null);
-        //tempCanvas.drawCircle(10, 10, 40, paint);
-//Draw everything else you want into the canvas, in this example a rectangle with rounded edges
-        //tempCanvas.drawRoundRect(new RectF(0,0,20,20), 2, 2, paint);
-
-//Attach the canvas to the ImageView
-       // image.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
-
-        //canvas.drawCircle(10, 10, 10, paint);
-        for (int i = 0; i < faces.size(); ++i) {
-            Log.d("JESTEM", "WPETLI");
-            Face face = faces.valueAt(i);
-            for (Landmark landmark : face.getLandmarks()) {
-                Log.d("JESTEM", "WDRUGIEJ");
-                int cx = (int) (landmark.getPosition().x * 1);
-                int cy = (int) (landmark.getPosition().y * 1);
-                tempCanvas.drawCircle(cx, cy, 10, paint);
-            }
-        }
-        image.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
-        if(!detector.isOperational()) Log.d("JESTEM", "NIEDOSTEPNY");
-        Log.d("JESTEM", "TUTAJ");
-        detector.release();
+    public void detectFace(View view){
+        BitmapDrawable map = ProgramManager.detectFace(this, ((BitmapDrawable)image.getDrawable()).getBitmap());
+        if(map != null) image.setImageDrawable(map);
     }
 }
